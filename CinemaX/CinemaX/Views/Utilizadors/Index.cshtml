@@ -1,10 +1,11 @@
-﻿@model IEnumerable<CinemaX.Models.Utilizador>
+﻿@model IEnumerable<CinemaX.Models.Perfil>
+@using Microsoft.AspNetCore.Http;
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>@Context.Session.GetString("NomeUtilizador")</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,13 +14,25 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserName)
+                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserPassWord)
+                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserPassWord)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdGrupoNavigation)
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telemovel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNascimento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)
             </th>
             <th></th>
         </tr>
@@ -28,18 +41,25 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserName)
+                @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserPassWord)
+                @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.UserPassWord)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdGrupoNavigation.NomeGrupo)
+                @Html.DisplayFor(modelItem => item.Nome)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdUtilizador">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdUtilizador">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdUtilizador">Delete</a>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telemovel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataNascimento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)
             </td>
         </tr>
 }

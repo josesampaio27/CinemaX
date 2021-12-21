@@ -144,8 +144,8 @@ C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\n
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\runtimes\win-arm\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
-C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Create.cshtml.g.cs
-C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Delete.cshtml.g.cs
-C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Details.cshtml.g.cs
-C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Edit.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Index.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Register.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Login.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Perfil.cshtml.g.cs

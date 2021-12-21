@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CinemaX.Data;
 using CinemaX.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace CinemaX.Controllers
 {
@@ -22,134 +23,105 @@ namespace CinemaX.Controllers
         // GET: Utilizadors
         public async Task<IActionResult> Index()
         {
-            var cinemaXContext = _context.Utilizadors.Include(u => u.IdGrupoNavigation);
+            var cinemaXContext = _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation);
             return View(await cinemaXContext.ToListAsync());
         }
 
-        // GET: Utilizadors/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var utilizador = await _context.Utilizadors
-                .Include(u => u.IdGrupoNavigation)
-                .FirstOrDefaultAsync(m => m.IdUtilizador == id);
-            if (utilizador == null)
-            {
-                return NotFound();
-            }
-
-            return View(utilizador);
-        }
-
-        // GET: Utilizadors/Create
-        public IActionResult Create()
-        {
-            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo");
+        // GET: Utilizadors/Register
+        public IActionResult Register()
+        {           
             return View();
         }
 
-        // POST: Utilizadors/Create
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Perfil(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var Perfil = await _context.Perfils
+                .FirstOrDefaultAsync(m => m.IdUtilizador == id);
+            if (Perfil == null)
+            {
+                return NotFound();
+            }
+
+            return View(Perfil);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Session");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // POST: Utilizadors/Register
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserName,UserPassWord,IdUtilizador,IdGrupo")] Utilizador utilizador)
+        public async Task<IActionResult> Register([Bind("UserName,UserPassWord,IdUtilizador,IdGrupo")] Utilizador utilizador, [Bind("Nome,Email,DataNascimento,Telemovel")] Perfil perfil)
         {
             if (ModelState.IsValid)
             {
+                string Hash = GetStringSha256Hash(utilizador.UserPassWord);
+                utilizador.UserPassWord = Hash;
+                utilizador.IdGrupo = 1;
                 _context.Add(utilizador);
                 await _context.SaveChangesAsync();
+                perfil.IdUtilizador = utilizador.IdUtilizador;
+                perfil.IdUtilizadorNavigation = utilizador;
+                _context.Add(perfil);
+                await _context.SaveChangesAsync();               
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
             return View(utilizador);
         }
 
-        // GET: Utilizadors/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        internal static string GetStringSha256Hash(string text)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (String.IsNullOrEmpty(text))
+                return String.Empty;
 
-            var utilizador = await _context.Utilizadors.FindAsync(id);
-            if (utilizador == null)
+            using (var sha = new System.Security.Cryptography.SHA256Managed())
             {
-                return NotFound();
+                byte[] textData = System.Text.Encoding.UTF8.GetBytes(text);
+                byte[] hash = sha.ComputeHash(textData);
+                return BitConverter.ToString(hash).Replace("-", String.Empty);
             }
-            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
-            return View(utilizador);
         }
 
-        // POST: Utilizadors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserName,UserPassWord,IdUtilizador,IdGrupo")] Utilizador utilizador)
+        public async Task<IActionResult> Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
         {
-            if (id != utilizador.IdUtilizador)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(utilizador);
-                    await _context.SaveChangesAsync();
+                string Hash = GetStringSha256Hash(utilizador.UserPassWord);
+                utilizador.UserPassWord = Hash;
+
+                Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.UserName == utilizador.UserName && u.UserPassWord == utilizador.UserPassWord);
+
+                if (user == null){
+                    ModelState.AddModelError("UserName", "Utilizador ou password erradas!");
+                    return View(utilizador);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UtilizadorExists(utilizador.IdUtilizador))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                HttpContext.Session.SetInt32("IdUtilizador", user.IdUtilizador);
+                HttpContext.Session.SetString("NomeUtilizador", user.UserName);
+
+
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
+            }           
             return View(utilizador);
-        }
-
-        // GET: Utilizadors/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var utilizador = await _context.Utilizadors
-                .Include(u => u.IdGrupoNavigation)
-                .FirstOrDefaultAsync(m => m.IdUtilizador == id);
-            if (utilizador == null)
-            {
-                return NotFound();
-            }
-
-            return View(utilizador);
-        }
-
-        // POST: Utilizadors/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var utilizador = await _context.Utilizadors.FindAsync(id);
-            _context.Utilizadors.Remove(utilizador);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool UtilizadorExists(int id)
