@@ -149,3 +149,4 @@ C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\n
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Login.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Perfil.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\ActivationError.cshtml.g.cs

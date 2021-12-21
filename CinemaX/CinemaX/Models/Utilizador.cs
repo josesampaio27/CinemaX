@@ -27,6 +27,7 @@ namespace CinemaX.Models
         [Key]
         public int IdUtilizador { get; set; }
         public int IdGrupo { get; set; } = 0;
+        public string ActivationCode { get; set; }
 
         [ForeignKey(nameof(IdGrupo))]
         [InverseProperty(nameof(GrupoPermisso.Utilizadors))]

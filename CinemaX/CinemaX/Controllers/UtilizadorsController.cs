@@ -8,16 +8,28 @@ using Microsoft.EntityFrameworkCore;
 using CinemaX.Data;
 using CinemaX.Models;
 using Microsoft.AspNetCore.Http;
+using CinemaX.Services;
+using Microsoft.AspNetCore.Hosting;
+using System.Security.Cryptography;
 
 namespace CinemaX.Controllers
 {
     public class UtilizadorsController : Controller
     {
         private readonly CinemaXContext _context;
+        private readonly IEmailSender _emailSender;
+        static readonly char[] availableCharacters = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
+  };
 
-        public UtilizadorsController(CinemaXContext context)
+        public UtilizadorsController(CinemaXContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         // GET: Utilizadors
@@ -62,6 +74,31 @@ namespace CinemaX.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public IActionResult ActivationError()
+        {
+            return View();
+        }
+
+        [Route("Utilizadors/Activate/{*code}")]
+        public async Task<IActionResult> Activate(string code)
+        {
+            Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);
+
+            if (user != null)
+            {
+                user.ActivationCode = "Activated";
+
+                _context.Update(user);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Login", "Utilizadors");
+            }
+
+            return RedirectToAction("ActivationError", "Utilizadors");
+
+        }
+
         // POST: Utilizadors/Register
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -74,12 +111,17 @@ namespace CinemaX.Controllers
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
                 utilizador.UserPassWord = Hash;
                 utilizador.IdGrupo = 1;
+                utilizador.ActivationCode = GenerateNewCode(25);
+
                 _context.Add(utilizador);
+
                 await _context.SaveChangesAsync();
                 perfil.IdUtilizador = utilizador.IdUtilizador;
                 perfil.IdUtilizadorNavigation = utilizador;
+
                 _context.Add(perfil);
-                await _context.SaveChangesAsync();               
+                await _context.SaveChangesAsync();
+                EnviaEmail(perfil.Email,utilizador.ActivationCode);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
@@ -115,6 +157,12 @@ namespace CinemaX.Controllers
                     return View(utilizador);
                 }
 
+                if(user.ActivationCode != "Activated")
+                {
+                    ModelState.AddModelError("UserName", "Utilizador não confirmado");
+                    return View(utilizador);
+                }
+
                 HttpContext.Session.SetInt32("IdUtilizador", user.IdUtilizador);
                 HttpContext.Session.SetString("NomeUtilizador", user.UserName);
 
@@ -128,5 +176,56 @@ namespace CinemaX.Controllers
         {
             return _context.Utilizadors.Any(e => e.IdUtilizador == id);
         }
+
+        public void EnviaEmail(string email, string code)
+        {
+            int? id = HttpContext.Session.GetInt32("IdUtilizador");
+
+
+            string Destino, Assunto, Mensagem;
+
+            string Url = "https://localhost:44341/Utilizadors/Activate/"+code;
+
+            Destino = email;
+            Assunto = "Confirme o registo no website CinemaX";
+            Mensagem = "<h1>Bem vindo ao CinemaX</h1> <br/>A tua conta foi criada com sucesso, confirma a tua conta para puderes começar a usufruir do nosso website<br/>" +
+                "<a href=\""+Url+"\">Clica aqui para confirmar a tua conta</a>";
+            TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();                                    
+        }
+        
+        public async Task TesteEnvioEmail(string email, string assunto, string mensagem)
+        {
+            try
+            {
+                //email destino, assunto do email, mensagem a enviar
+                await _emailSender.SendEmailAsync(email, assunto, mensagem);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static string GenerateNewCode(int length)
+        {
+            char[] identifier = new char[length];
+            byte[] randomData = new byte[length];
+
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(randomData);
+            }
+
+            for (int idx = 0; idx < identifier.Length; idx++)
+            {
+                int pos = randomData[idx] % availableCharacters.Length;
+                identifier[idx] = availableCharacters[pos];
+            }
+
+            return new string(identifier);
+        }
+
+
+
     }
 }

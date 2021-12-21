@@ -1,4 +1,5 @@
 using CinemaX.Data;
+using CinemaX.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,9 @@ namespace CinemaX
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddTransient<IEmailSender, AuthMessageSender>();
 
             services.AddDbContext<CinemaXContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CinemaXContext")));
@@ -61,6 +65,12 @@ namespace CinemaX
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                   name: "filtered",
+                   pattern: "Filter/{*code}",
+                   defaults: new { Controller = "Utilizadors", Action = "Activate" });                 
+
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
