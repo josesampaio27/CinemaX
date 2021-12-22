@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using CinemaX.Data;
 using CinemaX.Services;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +41,8 @@ namespace CinemaX
                 option.IdleTimeout = TimeSpan.FromMinutes(30);
                 option.Cookie.Name = ".AspNetCore.Session";
             });
+
+            services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +66,8 @@ namespace CinemaX
             app.UseAuthorization();
 
             app.UseSession();
+
+            app.UseNotyf();
 
             app.UseEndpoints(endpoints =>
             {

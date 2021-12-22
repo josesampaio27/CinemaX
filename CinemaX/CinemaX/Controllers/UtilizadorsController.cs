@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using CinemaX.Services;
 using Microsoft.AspNetCore.Hosting;
 using System.Security.Cryptography;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace CinemaX.Controllers
 {
@@ -25,11 +26,13 @@ namespace CinemaX.Controllers
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
   };
+       private readonly INotyfService _notyf;
 
-        public UtilizadorsController(CinemaXContext context, IEmailSender emailSender)
+        public UtilizadorsController(CinemaXContext context, IEmailSender emailSender, INotyfService notyf)
         {
             _context = context;
             _emailSender = emailSender;
+            _notyf = notyf;
         }
 
         // GET: Utilizadors
@@ -47,6 +50,9 @@ namespace CinemaX.Controllers
 
         public IActionResult Login()
         {
+            if(Request.Headers["Referer"].ToString().Contains("/Utilizadors/Activate"))
+                _notyf.Success("Utilizador confirmado com sucesso");
+
             return View();
         }
 
@@ -79,6 +85,11 @@ namespace CinemaX.Controllers
             return View();
         }
 
+        public IActionResult ActivationWarning()
+        {
+            return View();
+        }
+
         [Route("Utilizadors/Activate/{*code}")]
         public async Task<IActionResult> Activate(string code)
         {
@@ -91,8 +102,8 @@ namespace CinemaX.Controllers
                 _context.Update(user);
 
                 await _context.SaveChangesAsync();
-
-                return RedirectToAction("Login", "Utilizadors");
+                               
+                return View();
             }
 
             return RedirectToAction("ActivationError", "Utilizadors");
@@ -106,6 +117,12 @@ namespace CinemaX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("UserName,UserPassWord,IdUtilizador,IdGrupo")] Utilizador utilizador, [Bind("Nome,Email,DataNascimento,Telemovel")] Perfil perfil)
         {
+            if (_context.Utilizadors.Where(u => u.UserName == utilizador.UserName).Count() != 0)
+                ModelState.AddModelError("UserName", "Nome de utilizador ja existente");
+
+            if (_context.Perfils.Where(u => u.Email == perfil.Email).Count() != 0)
+                ModelState.AddModelError("Perfil.Email", "email ja registrado");
+
             if (ModelState.IsValid)
             {
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
@@ -122,7 +139,7 @@ namespace CinemaX.Controllers
                 _context.Add(perfil);
                 await _context.SaveChangesAsync();
                 EnviaEmail(perfil.Email,utilizador.ActivationCode);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ActivationWarning));
             }
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
             return View(utilizador);
@@ -188,8 +205,8 @@ namespace CinemaX.Controllers
 
             Destino = email;
             Assunto = "Confirme o registo no website CinemaX";
-            Mensagem = "<h1>Bem vindo ao CinemaX</h1> <br/>A tua conta foi criada com sucesso, confirma a tua conta para puderes começar a usufruir do nosso website<br/>" +
-                "<a href=\""+Url+"\">Clica aqui para confirmar a tua conta</a>";
+            Mensagem = "<h1>Bem vindo ao CinemaX</h1> <br/>A sua conta foi criada com sucesso, confirme a sua conta para poder começar a usufruir do nosso website" +
+            "<br/><a href=\""+Url+"\">Clique aqui para confirmar a sua conta</a>";
             TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();                                    
         }
         

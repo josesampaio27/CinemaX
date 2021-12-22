@@ -150,3 +150,9 @@ C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\n
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Perfil.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\ActivationError.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\ActivationWarning.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\CinemaX.StaticWebAssets.xml
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\AspNetCoreHero.ToastNotification.Views.dll
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\AspNetCoreHero.ToastNotification.dll
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\CinemaX.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Activate.cshtml.g.cs

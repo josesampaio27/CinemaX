@@ -11,16 +11,19 @@ namespace CinemaX.Models
     [Table("Perfil")]
     public partial class Perfil
     {
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(50)]
         public string Nome { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(50)]
+        [DataType(DataType.EmailAddress, ErrorMessage ="Introduza um endereço email valido")]
         public string Email { get; set; }
         [Column(TypeName = "date")]
+        [DataType(DataType.Date)]
         public DateTime DataNascimento { get; set; }
         [Key]
         public int IdUtilizador { get; set; }
+        [Range(900000000, 969999999,ErrorMessage ="Intruduza um numero valido")]
         public int Telemovel { get; set; }
 
         [ForeignKey(nameof(IdUtilizador))]

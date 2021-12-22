@@ -17,13 +17,16 @@ namespace CinemaX.Models
             CategoriasFavorita = new HashSet<CategoriasFavorita>();
         }
 
-        [Required]
+        [Required(ErrorMessage ="O campo {0} é obrigatorio")]
         [StringLength(30)]
         public string UserName { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]      
         [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 10 ,ErrorMessage = "A {0} deve ter pelo menos {2} caracteres e um maximo de {1} caracteres")]
+        [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$",ErrorMessage ="A password deverá conter pelo menos uma letra minuscula, uma lestra maiuscula e um numero")]
         public string UserPassWord { get; set; }
+
         [Key]
         public int IdUtilizador { get; set; }
         public int IdGrupo { get; set; } = 0;
