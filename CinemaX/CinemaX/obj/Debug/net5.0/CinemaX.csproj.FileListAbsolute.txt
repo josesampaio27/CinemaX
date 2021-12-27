@@ -156,3 +156,10 @@ C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\n
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\bin\Debug\net5.0\AspNetCoreHero.ToastNotification.dll
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\CinemaX.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\Activate.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Delete.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Details.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Edit.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\PermissionDenied.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LayoutBackOfiice.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\AddMovie.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Index.cshtml.g.cs

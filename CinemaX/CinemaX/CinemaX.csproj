@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
+    <PackageReference Include="bootstrap" Version="5.1.2" />
+    <PackageReference Include="bootstrap.chosen" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
       <PrivateAssets>all</PrivateAssets>
@@ -13,6 +15,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Fotos\" />
   </ItemGroup>
 
 </Project>

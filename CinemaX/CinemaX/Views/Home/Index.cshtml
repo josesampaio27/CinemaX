@@ -1,8 +1,28 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<CinemaX.Models.Filme>
+
+@{
+    ViewData["Title"] = "Cartaz";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Cartaz</h1>
+
+@foreach (var item in Model)
+{
+<a href="/BackOffice/Details/@item.IdFilme">
+    <img src="~/Fotos/@item.Foto" width="250" height="370" style="border:0px;margin:10px" />
+</a>
+    }
+
+
+
+
+
+
+
+
+    @*@foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>*@

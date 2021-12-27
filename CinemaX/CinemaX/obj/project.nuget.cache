@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "u1XnevODUtkV/WQUS9EEqMq3tZQhsilFvShzDth9VaPrp7oxLHXvJ8pSa8OXXkT0oyptd1VEibKfOwg0w/lu7g==",
+  "dgSpecHash": "lk2mEqR5g6V821m4jl4d4YRjtTKyU1OaXZNyXGkc0ndE6KkXxy4/+nVOi0i6ZZm7wWhoY15XjG4wVnUgNa3y7A==",
   "success": true,
   "projectFilePath": "C:\\Users\\jldia\\Documents\\Source\\Repos\\GestorDeCinema\\CinemaX\\CinemaX\\CinemaX.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jldia\\.nuget\\packages\\aspnetcorehero.toastnotification\\1.1.0\\aspnetcorehero.toastnotification.1.1.0.nupkg.sha512",
+    "C:\\Users\\jldia\\.nuget\\packages\\bootstrap\\5.1.2\\bootstrap.5.1.2.nupkg.sha512",
+    "C:\\Users\\jldia\\.nuget\\packages\\bootstrap.chosen\\1.0.0\\bootstrap.chosen.1.0.0.nupkg.sha512",
     "C:\\Users\\jldia\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\jldia\\.nuget\\packages\\jquery\\1.8.0\\jquery.1.8.0.nupkg.sha512",
     "C:\\Users\\jldia\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
