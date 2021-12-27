@@ -37,7 +37,7 @@
             @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
         </dt>
         <dd class="col-sm-10">
-            @Context.Session.GetString("NomeUtilizador")
+            @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
         </dd>
     </dl>
 </div>

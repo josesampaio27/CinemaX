@@ -24,6 +24,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @using Microsoft.AspNetCore.Http
+                        @{string perm = Context.Session.GetString("Permissoes"); }
+                        @if (perm != null && perm.Contains("1"))
+                                    {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="BackOffice" asp-action="Index">BackOffice</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

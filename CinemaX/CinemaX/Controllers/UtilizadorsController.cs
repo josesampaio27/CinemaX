@@ -63,8 +63,15 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
-            var Perfil = await _context.Perfils
-                .FirstOrDefaultAsync(m => m.IdUtilizador == id);
+            if(id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
+
+            
+
+            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+
             if (Perfil == null)
             {
                 return NotFound();
@@ -182,6 +189,19 @@ namespace CinemaX.Controllers
 
                 HttpContext.Session.SetInt32("IdUtilizador", user.IdUtilizador);
                 HttpContext.Session.SetString("NomeUtilizador", user.UserName);
+
+                string permissoes = null;
+                
+                foreach (var lista in _context.ListaPermissoes)
+                {
+                    if (lista.IdGrupo == user.IdGrupo)
+                    {
+                        permissoes += lista.IdPermissao.ToString();
+                    }
+                }
+
+                if(permissoes != null)
+                HttpContext.Session.SetString("Permissoes", permissoes);
 
 
                 return RedirectToAction(nameof(Index));

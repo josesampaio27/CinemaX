@@ -19,24 +19,26 @@ namespace CinemaX.Models
 
         [Key]
         public int IdFilme { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(50)]
         public string Nome { get; set; }
-        [Required]
         [StringLength(200)]
         public string Foto { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(50)]
         public string Realizador { get; set; }
         [Column("Data_", TypeName = "date")]
+        [DataType(DataType.Date)]
         public DateTime Data { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(250)]
+        [DataType(DataType.Url)]
         public string LinkTrailer { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         [StringLength(500)]
         public string Descrição { get; set; }
-        public int Duracao { get; set; }
+        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
+        public decimal Duracao { get; set; }
         public int IdCreationUser { get; set; }
         [Column(TypeName = "date")]
         public DateTime DataAdicionado { get; set; }
