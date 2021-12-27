@@ -3,10 +3,7 @@
     "",
     "\\CinemaX",
     "\\CinemaX\\CinemaX",
-    "\\CinemaX\\CinemaX\\Controllers",
-    "\\CinemaX\\CinemaX\\Models",
-    "\\CinemaX\\CinemaX\\Views",
-    "\\CinemaX\\CinemaX\\Views\\Utilizadors"
+    "\\CinemaX\\CinemaX\\Controllers"
   ],
   "SelectedNode": "\\CinemaX\\CinemaX\\Controllers\\UtilizadorsController.cs",
   "PreviewInSolutionExplorer": false
