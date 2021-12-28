@@ -39,25 +39,29 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
         </dd>
-        <dt class="col-sm-2">
-            Categorias Favoritas:
-        </dt>
-        <dd class="col-sm-10">
-            @{int CategoriasCount = Model.IdUtilizadorNavigation.CategoriasFavorita.Count; }
-            @foreach (var Categoria in Model.IdUtilizadorNavigation.CategoriasFavorita)
-            {
-                CategoriasCount--;
-                @Categoria.IdCategoriaNavigation.Nome;
-                if (CategoriasCount != 0)
-                {<label>,</label> }
-                else
-                {<label>.</label>}
+        @{int CategoriasCount = Model.IdUtilizadorNavigation.CategoriasFavorita.Count; }
+        @if (CategoriasCount != 0)
+        {
+            <dt class="col-sm-2">
+                Categorias Favoritas:
+            </dt>
 
-            }
-        </dd>        
-        <dt class="col-sm-2">
-            <br />
-            <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favorias</a>
-        </dt>
-    </dl>
+            <dd class="col-sm-10">
+                @foreach (var Categoria in Model.IdUtilizadorNavigation.CategoriasFavorita)
+                {
+                    CategoriasCount--;
+                    @Categoria.IdCategoriaNavigation.Nome;
+                    if (CategoriasCount != 0)
+                    {<label>,</label> }
+                    else
+                    {<label>.</label>}
+
+                }
+            </dd>
+        }
+            <dt class="col-sm-2">
+                <br />
+                <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
+            </dt>
+        </dl>
 </div>

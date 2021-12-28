@@ -138,8 +138,8 @@ namespace CinemaX.Controllers
                 _context.Add(aux);              
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            await _context.SaveChangesAsync();          
+            return Redirect("Perfil/"+id.ToString());
         }
 
         public IActionResult Logout()
