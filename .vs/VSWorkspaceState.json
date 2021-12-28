@@ -8,6 +8,6 @@
     "\\CinemaX\\CinemaX\\Views\\Home",
     "\\CinemaX\\CinemaX\\Views\\Utilizadors"
   ],
-  "SelectedNode": "\\CinemaX\\CinemaX\\Views\\Utilizadors\\Perfil.cshtml",
+  "SelectedNode": "\\CinemaX\\CinemaX\\Controllers\\UtilizadorsController.cs",
   "PreviewInSolutionExplorer": false
 }
