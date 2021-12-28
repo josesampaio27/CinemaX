@@ -1,0 +1,39 @@
+﻿@model CinemaX.Models.Perfil
+@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewData["Title"] = "Editar Categorias Favoritas";
+   
+}
+
+<h1>Editar categorias favoritas</h1>
+
+<hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="EditarCategoriasFavoritas" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div>
+                        <label>Categorias:</label>
+                        <ul>
+                            @foreach (Categorium categorias in ViewBag.Categorias)
+                            {
+                                var Categoria = Model.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(c => c.IdUtilizador == Context.Session.GetInt32("IdUtilizador") && c.IdCategoria == categorias.IdCategoria);
+                                
+                                    if (Categoria != null)
+                                    {
+                                        <li><input type="checkbox" name="IdCategorias" checked value="@categorias.IdCategoria"> @categorias.Nome</li>
+                                    }
+                                    else
+                                    {
+                                        <li><input type="checkbox" name="IdCategorias" value="@categorias.IdCategoria"> @categorias.Nome</li>
+                                    }                                                                
+                            }
+                        </ul>                       
+                    </div>
+                <div class="form-group">
+                    <input type="submit" value="Adicionar" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>

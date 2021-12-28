@@ -2,11 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\CinemaX",
+    "\\CinemaX\\CinemaX",
     "\\CinemaX\\CinemaX\\Controllers",
-    "\\CinemaX\\CinemaX\\Models",
     "\\CinemaX\\CinemaX\\Views",
+    "\\CinemaX\\CinemaX\\Views\\Home",
     "\\CinemaX\\CinemaX\\Views\\Utilizadors"
   ],
-  "SelectedNode": "\\CinemaX\\CinemaX.sln",
+  "SelectedNode": "\\CinemaX\\CinemaX\\Views\\Utilizadors\\Perfil.cshtml",
   "PreviewInSolutionExplorer": false
 }

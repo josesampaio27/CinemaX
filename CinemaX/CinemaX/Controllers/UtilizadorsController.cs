@@ -72,12 +72,74 @@ namespace CinemaX.Controllers
 
             var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
 
+            foreach (var cat in _context.CategoriasFavoritas)
+            {
+                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+            }
+
             if (Perfil == null)
             {
                 return NotFound();
             }
 
             return View(Perfil);
+        }
+
+        public async Task<IActionResult> EditarCategoriasFavoritas()
+        {
+            if (HttpContext.Session.GetInt32("IdUtilizador") == null)
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
+
+            int id = (int)HttpContext.Session.GetInt32("IdUtilizador");
+
+            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+
+            foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
+            {
+                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+            }
+
+            ViewBag.Categorias = _context.Categoria;
+
+            if (Perfil == null)
+            {
+                return NotFound();
+            }
+
+            return View(Perfil);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarCategoriasFavoritas(int[] IdCategorias)
+        {
+            int id = (int)HttpContext.Session.GetInt32("IdUtilizador");
+
+            foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
+            {
+                if (cat.IdUtilizador == id)
+                    _context.Remove(cat);
+            }
+
+            foreach (int IdCat in IdCategorias)
+            {               
+
+                CategoriasFavorita aux = new CategoriasFavorita();
+                aux.IdCategoria = IdCat;
+                aux.IdUtilizador = id;
+
+                Categorium cat = _context.Categoria.FirstOrDefault(c => c.IdCategoria == aux.IdCategoria);
+                aux.IdCategoriaNavigation = cat;
+
+                Utilizador ut = _context.Utilizadors.FirstOrDefault(u => u.IdUtilizador == aux.IdUtilizador);
+                aux.IdUtilizadorNavigation = ut;
+             
+                _context.Add(aux);              
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Logout()

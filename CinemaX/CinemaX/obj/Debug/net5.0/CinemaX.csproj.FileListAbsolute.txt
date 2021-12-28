@@ -163,3 +163,4 @@ C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\n
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LayoutBackOfiice.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\AddMovie.cshtml.g.cs
 C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Index.cshtml.g.cs
+C:\Users\jldia\Documents\Source\Repos\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\EditarCategoriasFavoritas.cshtml.g.cs
