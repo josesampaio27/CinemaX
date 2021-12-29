@@ -37,5 +37,23 @@ namespace CinemaX.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Filmes.FirstOrDefault(f => f.IdFilme == id) == null)
+            {
+                return NotFound();
+            }
+
+            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes)
+                .FirstOrDefaultAsync(m => m.IdFilme == id);
+
+            foreach (var cat in filme.CategoriasFilmes)
+            {
+                filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+            }
+
+            return View(filme);
+        }
     }
 }

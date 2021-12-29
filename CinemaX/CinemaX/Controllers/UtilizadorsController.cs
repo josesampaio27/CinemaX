@@ -26,6 +26,7 @@ namespace CinemaX.Controllers
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
   };
+
        private readonly INotyfService _notyf;
 
         public UtilizadorsController(CinemaXContext context, IEmailSender emailSender, INotyfService notyf)
@@ -74,7 +75,8 @@ namespace CinemaX.Controllers
 
             foreach (var cat in _context.CategoriasFavoritas)
             {
-                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                if(_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
             }
 
             if (Perfil == null)
@@ -98,7 +100,8 @@ namespace CinemaX.Controllers
 
             foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
             {
-                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                if (_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
             }
 
             ViewBag.Categorias = _context.Categoria;

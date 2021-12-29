@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdFilme" />
             <div class="form-group">
@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Foto" class="control-label"></label>
-                <input asp-for="Foto" class="form-control" />
+                <input asp-for="Foto" type="file" class="form-control" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -48,15 +48,30 @@
                 <input asp-for="Duracao" class="form-control" />
                 <span asp-validation-for="Duracao" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IdCreationUser" class="control-label"></label>
-                <input asp-for="IdCreationUser" class="form-control" />
-                <span asp-validation-for="IdCreationUser" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataAdicionado" class="control-label"></label>
-                <input asp-for="DataAdicionado" class="form-control" />
-                <span asp-validation-for="DataAdicionado" class="text-danger"></span>
+            <div>
+                <label>Categorias:</label>
+                <ul>
+                    @{string Categoria = null;}
+                    @foreach (Categorium categorias in ViewBag.Categorias)
+                    {
+                        foreach(CategoriasFilme cat in Model.CategoriasFilmes)
+                        {
+                            if (cat.IdCategoria == categorias.IdCategoria)
+                                Categoria = "exists";
+                        }
+
+                        if (Categoria != null)
+                        {
+                            <li><input type="checkbox" name="IdCategorias" checked value="@categorias.IdCategoria"> @categorias.Nome</li>
+                        }
+                        else
+                        {
+                            <li><input type="checkbox" name="IdCategorias" value="@categorias.IdCategoria"> @categorias.Nome</li>
+                        }
+
+                        Categoria = null;
+                    }
+                </ul>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -66,7 +81,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="FilmList">Back to List</a>
 </div>
 
 @section Scripts {

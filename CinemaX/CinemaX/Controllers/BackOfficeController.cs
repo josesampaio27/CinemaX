@@ -27,28 +27,11 @@ namespace CinemaX.Controllers
             _notyf = notyf;
         }
 
-        // GET: BackOffice/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> FilmList()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes)
-                .FirstOrDefaultAsync(m => m.IdFilme == id);
-
-            foreach(var cat in filme.CategoriasFilmes)
-            {               
-                filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
-            }
-
-            if (filme == null)
-            {
-                return NotFound();
-            }
-
-            return View(filme);
+            if (!Perm(1))
+                return RedirectToAction(nameof(PermissionDenied));
+            return View(await _context.Filmes.ToListAsync());
         }
 
         // GET: BackOffice/Create
@@ -65,13 +48,6 @@ namespace CinemaX.Controllers
             return View();
         }
 
-        public IActionResult Index()
-        {
-            if (!Perm(1))
-                return RedirectToAction(nameof(PermissionDenied));
-            return View();
-        }
-
 
         // POST: BackOffice/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -80,6 +56,9 @@ namespace CinemaX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddMovie([Bind("IdFilme,Nome,Foto,Realizador,Data,LinkTrailer,Descrição,Duracao,IdCreationUser,DataAdicionado")] Filme filme, IFormFile Foto,int []IdCategorias)
         {
+            if (Foto == null)
+                ModelState.AddModelError("Foto", "É obrigatorio introduzir uma foto");
+
             filme.Foto = Foto.FileName;
          
             if (ModelState.IsValid)
@@ -111,7 +90,7 @@ namespace CinemaX.Controllers
 
                 _context.Add(filme);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(FilmList));
             }
 
             ViewBag.Categorias = _context.Categoria;
@@ -119,18 +98,31 @@ namespace CinemaX.Controllers
         }
 
         // GET: BackOffice/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> EditMovie(int? id)
         {
+            if (!Perm(1))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var filme = await _context.Filmes.FindAsync(id);
+            var filme =  _context.Filmes.Include(f => f.CategoriasFilmes).FirstOrDefault(f => f.IdFilme == id);
+
             if (filme == null)
             {
                 return NotFound();
             }
+
+            foreach (CategoriasFilme catf in _context.CategoriasFilmes)
+            {
+                if(_context.CategoriasFilmes.FirstOrDefault(f => f.IdFilme == id && f.IdCategoria == catf.IdCategoria) != null)
+                    filme.CategoriasFilmes.FirstOrDefault(f => f.IdFilme == id && f.IdCategoria == catf.IdCategoria).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == catf.IdCategoria);
+            }
+
+            ViewBag.Categorias = _context.Categoria;
+
             return View(filme);
         }
 
@@ -139,18 +131,59 @@ namespace CinemaX.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdFilme,Nome,Foto,Realizador,Data,LinkTrailer,Descrição,Duracao,IdCreationUser,DataAdicionado")] Filme filme)
+        public async Task<IActionResult> EditMovie(int id, [Bind("IdFilme,Nome,Foto,Realizador,Data,LinkTrailer,Descrição,Duracao,IdCreationUser,DataAdicionado")] Filme filme ,IFormFile Foto, int[] IdCategorias)
         {
             if (id != filme.IdFilme)
             {
                 return NotFound();
-            }
+            }           
 
             if (ModelState.IsValid)
             {
-                try
+                foreach (CategoriasFilme catf in _context.CategoriasFilmes)
                 {
-                    _context.Update(filme);
+                    if (catf.IdFilme == id)
+                        _context.Remove(catf);
+                }
+
+                foreach (int catid in IdCategorias)
+                {
+                    CategoriasFilme aux = new CategoriasFilme();
+                    Categorium cat = _context.Categoria.FirstOrDefault(c => c.IdCategoria == catid);
+                    aux.IdCategoria = catid;
+                    aux.IdCategoriaNavigation = cat;
+                    aux.IdFilme = id;                  
+                    _context.Add(aux);
+                }
+
+                Filme flm = _context.Filmes.FirstOrDefault(f => f.IdFilme == filme.IdFilme);
+                
+
+                if (Foto != null)
+                {
+                     flm.Foto = Foto.FileName;
+
+                     string destination = Path.Combine(
+                    _he.ContentRootPath, "wwwroot/Fotos/", Path.GetFileName(Foto.FileName)
+                    );
+
+
+                    FileStream fs = new FileStream(destination, FileMode.Create);
+
+                    Foto.CopyTo(fs);
+                    fs.Close();
+                }
+
+                flm.Data = filme.Data;
+                flm.Descrição = filme.Descrição;
+                flm.Duracao = filme.Duracao;
+                flm.LinkTrailer = filme.LinkTrailer;
+                flm.Nome = filme.Nome;
+                flm.Realizador = filme.Realizador;               
+               
+                try
+                {                    
+                    _context.Update(flm);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -164,14 +197,48 @@ namespace CinemaX.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(FilmList));
             }
+
+            filme.CategoriasFilmes = _context.Filmes.FirstOrDefault(f => f.IdFilme == id).CategoriasFilmes;
+
+            foreach (CategoriasFilme catf in _context.CategoriasFilmes)
+            {
+                if (_context.CategoriasFilmes.FirstOrDefault(f => f.IdFilme == id && f.IdCategoria == catf.IdCategoria) != null)
+                    filme.CategoriasFilmes.FirstOrDefault(f => f.IdFilme == id && f.IdCategoria == catf.IdCategoria).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == catf.IdCategoria);
+            }
+
+            ViewBag.Categorias = _context.Categoria;
+
+            return View(filme);
+        }
+
+        public async Task<IActionResult> MovieDetails(int? id)
+        {
+            if (!Perm(1))
+                return RedirectToAction(nameof(PermissionDenied));
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var filme = await _context.Filmes
+                .FirstOrDefaultAsync(m => m.IdFilme == id);
+            if (filme == null)
+            {
+                return NotFound();
+            }
+
             return View(filme);
         }
 
         // GET: BackOffice/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> DeleteMovie(int? id)
         {
+            if (!Perm(1))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (id == null)
             {
                 return NotFound();
@@ -188,14 +255,20 @@ namespace CinemaX.Controllers
         }
 
         // POST: BackOffice/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteMovie")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            foreach (CategoriasFilme catf in _context.CategoriasFilmes)
+            {
+                if (catf.IdFilme == id)
+                    _context.Remove(catf);
+            }
+
             var filme = await _context.Filmes.FindAsync(id);
             _context.Filmes.Remove(filme);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(FilmList));
         }
 
         private bool FilmeExists(int id)
