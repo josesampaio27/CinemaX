@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "JzbeswFvMFxjKas2qRB5CLnpIwveskRLBiDGUXItbrKcZzOY29PxKRvCMqkQe69dYio1k/fzEzOATg2CU8CKYw==",
+  "dgSpecHash": "rnRjGYud2ZgIYCL5omu/wLhDtP1PsHSakYUf1mZUm4r3cTC2jxwy6vxUOBRfAVvdWRxMeq+oKWjp9ejPR4Qriw==",
   "success": true,
   "projectFilePath": "A:\\Gitlab\\GestorDeCinema\\CinemaX\\CinemaX\\CinemaX.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\joaos\\.nuget\\packages\\aspnetcorehero.toastnotification\\1.1.0\\aspnetcorehero.toastnotification.1.1.0.nupkg.sha512",
+    "C:\\Users\\joaos\\.nuget\\packages\\bootstrap\\5.1.2\\bootstrap.5.1.2.nupkg.sha512",
+    "C:\\Users\\joaos\\.nuget\\packages\\bootstrap.chosen\\1.0.0\\bootstrap.chosen.1.0.0.nupkg.sha512",
     "C:\\Users\\joaos\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\joaos\\.nuget\\packages\\jquery\\1.8.0\\jquery.1.8.0.nupkg.sha512",
     "C:\\Users\\joaos\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",

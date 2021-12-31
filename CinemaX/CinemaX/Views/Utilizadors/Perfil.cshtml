@@ -40,4 +40,5 @@
             @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
         </dd>
     </dl>
+    <a class="btn btn-primary" asp-action="EditarPerfil" asp-route-id="@Context.Session.GetInt32("IdUtilizador")"> Editar Perfil </a>
 </div>

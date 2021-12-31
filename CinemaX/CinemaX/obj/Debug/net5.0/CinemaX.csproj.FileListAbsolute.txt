@@ -314,3 +314,12 @@ A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\CinemaX.dll
 A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\ref\CinemaX.dll
 A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\CinemaX.pdb
 A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\CinemaX.genruntimeconfig.cache
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\AddMovie.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Delete.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Details.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Edit.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\Index.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\BackOffice\PermissionDenied.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Shared\_LayoutBackOfiice.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Home\ChangeProfile.cshtml.g.cs
+A:\Gitlab\GestorDeCinema\CinemaX\CinemaX\obj\Debug\net5.0\Razor\Views\Utilizadors\EditarPerfil.cshtml.g.cs

@@ -209,6 +209,12 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+        public IActionResult EditarPerfil(int? id)
+        {
+            Perfil perfil = _context.Perfils.FirstOrDefault(p => p.IdUtilizador == id);
+
+            return View(perfil);
+        }
         private bool UtilizadorExists(int id)
         {
             return _context.Utilizadors.Any(e => e.IdUtilizador == id);
