@@ -1,0 +1,41 @@
+﻿@model IEnumerable<CinemaX.Models.Categorium>
+
+    <form asp-action="Procurar" data-ajax="true"
+          data-ajax-method="post" data-ajax-mode="replace"
+          data-ajax-update="#TabFilmes" data-ajax-success="sucesso">
+        <div style="display:flex; border:solid; border-width:thin; border-color: black; padding:20px;">
+
+            <div class="ui-widget">
+                <label for="nome">Nome:</label>
+                <input id="nome" name="NomeFilme" />
+            </div>
+            <div class="ui-widget" style="padding-left:40px">
+                <label for="Realizador">Realizador:</label>
+                <input id="Realizador" name="NomeRealizador" />
+            </div>
+            
+            <div style="padding-left: 40px;">
+                <label>Categorias:</label>
+                <ul style="overflow-y:scroll; max-height:100px;">
+                    @foreach (Categorium categorias in ViewBag.Categorias)
+                    {
+                        <li><input type="checkbox" name="IdCategorias" value="@categorias.IdCategoria" /> @categorias.Nome</li>
+                    }
+                </ul>
+            </div>
+            <div style="padding-left:40px">
+                <input type="submit" value="Procurar" class="" />
+            </div>
+
+
+        </div>
+    </form>
+
+    <partial name="Filme" />
+
+    @section Scripts{
+        <script>
+            $("#nome").autocomplete({ source: @ViewBag.NomeFilmes});
+            $("#Realizador").autocomplete({ source: @ViewBag.NomeRealizador});
+        </script>
+    }

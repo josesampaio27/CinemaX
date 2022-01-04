@@ -87,7 +87,7 @@ namespace CinemaX.Controllers
             return View(Perfil);
         }
 
-        public async Task<IActionResult> EditarCategoriasFavoritas()
+        public IActionResult EditarCategoriasFavoritas()
         {
             if (HttpContext.Session.GetInt32("IdUtilizador") == null)
             {
@@ -96,12 +96,15 @@ namespace CinemaX.Controllers
 
             int id = (int)HttpContext.Session.GetInt32("IdUtilizador");
 
-            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+            var Perfil = _context.Perfils.Include(p=> p.IdUtilizadorNavigation).FirstOrDefault(m => m.IdUtilizador == id);
 
             foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
             {
                 if (_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
-                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                {
+                    cat.IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.Add(cat);                        
+                }
             }
 
             ViewBag.Categorias = _context.Categoria;
@@ -232,7 +235,7 @@ namespace CinemaX.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
+        public IActionResult Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
         {
             if (ModelState.IsValid)
             {
@@ -269,7 +272,7 @@ namespace CinemaX.Controllers
                 HttpContext.Session.SetString("Permissoes", permissoes);
 
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("index","Home");
             }           
             return View(utilizador);
         }
@@ -302,9 +305,9 @@ namespace CinemaX.Controllers
                 //email destino, assunto do email, mensagem a enviar
                 await _emailSender.SendEmailAsync(email, assunto, mensagem);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 

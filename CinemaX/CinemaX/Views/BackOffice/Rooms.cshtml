@@ -1,0 +1,53 @@
+﻿@model IEnumerable<CinemaX.Models.Sala>
+
+@{
+    ViewData["Title"] = "Rooms";
+    Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
+}
+
+<h1>Rooms</h1>
+
+<p>
+    <a asp-action="AddRoom">Adicionar sala</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Numero)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Capacidade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdCreationUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataAdicionada)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Capacidade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCreationUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataAdicionada)
+            </td>
+            <td>
+                <a asp-action="EditRoom" asp-route-id="@item.Numero">Edit</a> |               
+                <a asp-action="DeleteRoom" asp-route-id="@item.Numero">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
