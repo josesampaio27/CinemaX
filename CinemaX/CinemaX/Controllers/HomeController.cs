@@ -24,9 +24,14 @@ namespace CinemaX.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Filmes.ToListAsync());
+
+            List<Filme> cartaz = _context.Filmes.Skip(Math.Max(0, _context.Filmes.Count() - 4)).ToList();
+
+            cartaz.Reverse();
+
+            return View(cartaz);
         }
 
         public IActionResult Privacy()

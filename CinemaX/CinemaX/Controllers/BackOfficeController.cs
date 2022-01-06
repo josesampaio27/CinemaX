@@ -40,6 +40,68 @@ namespace CinemaX.Controllers
             _emailSender = emailSender;
         }
 
+        //Post
+        public IActionResult AddCategory(string NewName)
+        {
+            Categorium cat = new Categorium();
+            cat.Nome = NewName;
+            _context.Categoria.Add(cat);
+            _context.SaveChanges();
+            
+            return PartialView("CategoryListPartial", _context.Categoria);
+        }
+
+        //GET
+        public IActionResult EditCategory(int Id)
+        {
+            Categorium c = _context.Categoria.Find(Id);        
+            return PartialView("EditCategory", c);
+        }
+
+        //Post
+        [HttpPost]
+        public string EditCategory(int id, Categorium c)
+        {
+            _context.Update(c);
+            _context.SaveChanges();
+            return c.Nome;
+        }
+
+        //Post
+        public async Task<IActionResult> DeleteCategory(int Id)
+        {
+            Categorium c = _context.Categoria.Find(Id);      
+            
+            foreach(CategoriasFilme film in _context.CategoriasFilmes)
+            {
+                if(film.IdCategoria == Id)
+                {
+                    _notyf.Error("Impossivel eliminar enquanto existirem filmes desta categoria");
+                    return PartialView("CategoryListPartial", _context.Categoria);
+                }
+            }
+
+            foreach(CategoriasFavorita cat in _context.CategoriasFavoritas)
+            {
+                if (cat.IdCategoria == Id)
+                    _context.Remove(cat);
+            }
+
+            _context.Remove(c);
+            await _context.SaveChangesAsync();
+
+            return PartialView("CategoryListPartial", _context.Categoria);
+        }
+
+        //Get
+        public async Task<IActionResult> CategoryList()
+        {
+            var cinemaXContext = _context.Categoria;
+
+            return View(await cinemaXContext.ToListAsync());
+        }
+
+        //Post
         public IActionResult AddGroup(string NewName)
         {
             GrupoPermisso grupo = new GrupoPermisso();
@@ -52,6 +114,7 @@ namespace CinemaX.Controllers
             return PartialView("PermissoesPartial", _context.GrupoPermissoes);
         }
 
+        //Post
         public async Task<IActionResult> DeleteUser(int Id)
         {
             Perfil P = _context.Perfils.Find(Id);
@@ -63,14 +126,21 @@ namespace CinemaX.Controllers
             return PartialView("UserPartial", _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation));
         }
 
+        //Post
         public async Task<IActionResult> DeleteGroup(int Id)
         {
-            if (_context.ListaPermissoes.FirstOrDefault(l => l.IdGrupo == Id) != null)
+            if (_context.GrupoPermissoes.FirstOrDefault(l => l.IdGrupo == Id) != null)
             {
-                _notyf.Error("Impossivel eliminar enquanto contiver permissões");
+                _notyf.Error("Impossivel eliminar enquanto o grupo contiver Utilizadores");
             }
             else
             {
+                foreach(ListaPermisso list in _context.ListaPermissoes)
+                {
+                    if (list.IdGrupo == Id)
+                        _context.Remove(list);
+                }
+
                 GrupoPermisso G = _context.GrupoPermissoes.FirstOrDefault(x => x.IdGrupo == Id);
                 _context.GrupoPermissoes.Remove(G);
                 await _context.SaveChangesAsync();
@@ -92,6 +162,7 @@ namespace CinemaX.Controllers
             return View(await cinemaXContext.ToListAsync());
         }
 
+        //Post
         [HttpPost]
         public async Task<IActionResult> SaveGroups(int id, int []perms)
         {
@@ -357,69 +428,36 @@ namespace CinemaX.Controllers
             return RedirectToAction(nameof(SessionList));
         }
 
-        // GET: BackOffice/AddRoom
-        public IActionResult AddRoom()
-        {
-            if (!Perm(1))
-                return RedirectToAction(nameof(PermissionDenied));
-            return View();
-        }
-
+       
         //POST: BackOffice/AddRoom
         [HttpPost]
-        public async Task<IActionResult> AddRoom([Bind("Capacidade")] Sala sala)
+        public async Task<IActionResult> AddRoom(int number)
         {
-            if (ModelState.IsValid)
-            {
-                sala.DataAdicionada = DateTime.Now;
-                sala.IdCreationUser = (int)HttpContext.Session.GetInt32("IdUtilizador");
-                _context.Add(sala);
-                await _context.SaveChangesAsync();
-                _notyf.Success("sala adicionada com sucesso");
-                return RedirectToAction(nameof(Rooms));
-            }
-            return View(sala);
+            Sala sala = new Sala();
+            sala.Capacidade = number;
+            sala.DataAdicionada = DateTime.Now.Date;
+            sala.IdCreationUser = (int)HttpContext.Session.GetInt32("IdUtilizador");
+            _context.Add(sala);
+            await _context.SaveChangesAsync();
+
+            return PartialView("RoomsPartial", _context.Salas);
         }
 
         // GET: BackOffice/EditRoom/?
         public IActionResult EditRoom(int? id)
         {
-            if (!Perm(1))
-                return RedirectToAction(nameof(PermissionDenied));
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sala = _context.Salas.FirstOrDefault(S => S.Numero == id);
-
-            if (sala == null)
-            {
-                return NotFound();
-            }           
-          
-            return View(sala);      
+            Sala sala = _context.Salas.Find(id);
+            return PartialView("EditRoom", sala);
         }
 
         // POST: BackOffice/EditRoom
         [HttpPost]
-        public async Task<IActionResult> EditRoom(int id, [Bind("Capacidade")] Sala sala)
+        public async Task<int> EditRoom(int id, Sala sala)
         {
-            if (!Perm(1))
-                return RedirectToAction(nameof(PermissionDenied));
+            _context.Update(sala);
+            await _context.SaveChangesAsync();
 
-            if (ModelState.IsValid)
-            {
-                Sala _sala = _context.Salas.FirstOrDefault(s => s.Numero == id);
-                _sala.Capacidade = sala.Capacidade;
-                _context.Update(_sala);
-                await _context.SaveChangesAsync();
-                _notyf.Success("sala editada com sucesso");
-                return RedirectToAction(nameof(Rooms));
-            }
-
-            return View(sala);
+            return sala.Capacidade;
         }
 
         // GET: BackOffice/DeleteRoom/?
@@ -433,34 +471,25 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
-            if (_context.Salas.FirstOrDefault(s => s.Numero == id) != null)
+            if (_context.Sessaos.FirstOrDefault(s => s.Numero == id) != null)
             {
                 _notyf.Error("Impossivel eliminar sala se esta ainda contiver sessoes");
-                return RedirectToAction(nameof(Rooms));
+                return PartialView("RoomsPartial", _context.Salas);
             }
 
-            var sala = await _context.Salas.FirstOrDefaultAsync(s => s.Numero == id);
+            var sala = await _context.Salas.FindAsync(id);
             
             if (sala == null)
             {
                 return NotFound();
             }
 
-            return View(sala);
-        }
-
-        // POST: BackOffice/DeleteRoom 
-        [HttpPost, ActionName("DeleteRoom")]       
-        public async Task<IActionResult> DeleteRoomConfirmed(int id)
-        {          
-            var sala = await _context.Salas.FindAsync(id);
-            _context.Salas.Remove(sala);
+            _context.Remove(sala);
             await _context.SaveChangesAsync();
-            _notyf.Success("sala eliminada com sucesso");
-            return RedirectToAction(nameof(Rooms));
+
+            return PartialView("RoomsPartial", _context.Salas);
         }
-
-
+       
         // POST: BackOffice/AddMoive        
         [HttpPost]
         [ValidateAntiForgeryToken]

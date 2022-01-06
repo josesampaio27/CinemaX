@@ -8,7 +8,7 @@
 <h1>FilmList</h1>
 
 <p>
-    <a asp-action="AddMovie">Adicionar Filme</a>
+    <a asp-action="AddMovie" class="btn btn-primary">Adicionar Filme</a>
 </p>
 <table class="table">
     <thead>
@@ -50,9 +50,9 @@
                 @Html.DisplayFor(modelItem => item.DataAdicionado)
             </td>
             <td>
-                <a asp-action="EditMovie" asp-route-id="@item.IdFilme">Edit</a> |
-                <a asp-action="MovieDetails" asp-route-id="@item.IdFilme">Details</a> |
-                <a asp-action="DeleteMovie" asp-route-id="@item.IdFilme">Delete</a>
+                <a asp-action="EditMovie" asp-route-id="@item.IdFilme" class="btn btn-primary">Edit</a>
+                <a asp-action="MovieDetails" asp-route-id="@item.IdFilme" class="btn btn-primary" style="margin-left:5px;">Details</a>
+                <a asp-action="DeleteMovie" asp-route-id="@item.IdFilme" class="btn btn-danger" style="margin-left:5px;">Delete</a>
             </td>
         </tr>
 }
