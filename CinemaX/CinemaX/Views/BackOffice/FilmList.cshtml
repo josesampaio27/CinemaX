@@ -1,0 +1,60 @@
+﻿@model IEnumerable<CinemaX.Models.Filme>
+
+@{
+    ViewData["Title"] = "FilmList";
+    Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
+}
+
+<h1>FilmList</h1>
+
+<p>
+    <a asp-action="AddMovie">Adicionar Filme</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>           
+            <th>
+                @Html.DisplayNameFor(model => model.Realizador)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Data)
+            </th>                                
+            <th>
+                @Html.DisplayNameFor(model => model.IdCreationUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataAdicionado)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>           
+            <td>
+                @Html.DisplayFor(modelItem => item.Realizador)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>                              
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCreationUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataAdicionado)
+            </td>
+            <td>
+                <a asp-action="EditMovie" asp-route-id="@item.IdFilme">Edit</a> |
+                <a asp-action="MovieDetails" asp-route-id="@item.IdFilme">Details</a> |
+                <a asp-action="DeleteMovie" asp-route-id="@item.IdFilme">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

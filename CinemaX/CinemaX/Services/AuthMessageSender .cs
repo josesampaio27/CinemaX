@@ -53,9 +53,9 @@ namespace CinemaX.Services
                     await smtp.SendMailAsync(mail);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
     }

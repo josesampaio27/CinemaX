@@ -12,7 +12,7 @@ namespace CinemaX.Models
     {
         public GrupoPermisso()
         {
-            Utilizadors = new HashSet<Utilizador>();
+            Utilizadors = new HashSet<Utilizador>();          
         }
 
         [Key]
@@ -22,6 +22,6 @@ namespace CinemaX.Models
         public string NomeGrupo { get; set; }
 
         [InverseProperty(nameof(Utilizador.IdGrupoNavigation))]
-        public virtual ICollection<Utilizador> Utilizadors { get; set; }
+        public virtual ICollection<Utilizador> Utilizadors { get; set; }     
     }
 }

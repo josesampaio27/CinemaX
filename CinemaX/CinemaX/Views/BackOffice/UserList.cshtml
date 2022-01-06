@@ -1,0 +1,14 @@
+﻿@model IEnumerable<CinemaX.Models.Perfil>
+
+@{
+    ViewData["Title"] = "Utilizadores";
+    Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
+}
+
+<h1>Utilizadores</h1>
+
+<p>
+    <a asp-action="AddUser">Adicionar novo utilizador</a>
+</p>
+
+<partial name="UserPartial" model="Model" />

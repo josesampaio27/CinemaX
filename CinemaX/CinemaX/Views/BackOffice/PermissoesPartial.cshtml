@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CinemaX.Models.GrupoPermisso>
+
+<table class="table" id="Tabela">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NomeGrupo)
+            </th>
+            <th>
+                Permissões
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeGrupo)
+                </td>
+                <td>
+                    <form asp-action="SaveGroups" asp-route-id="@item.IdGrupo" data-ajax="true"
+                    data-ajax-method="post" data-ajax-mode="replace"
+                    data-ajax-update="#Tabela">
+                        @{List<Permisso> addedperms = new List<Permisso>();}
+                        @foreach (Permisso perm in ViewBag.Permissoes)
+                        {
+                            foreach (ListaPermisso perme in ViewBag.ListaPerm)
+                            {
+                                if (perme.IdGrupo == item.IdGrupo && perme.IdPermissao == perm.IdPermissao)
+                                {
+                                    if (!addedperms.Contains(perm))
+                                    {
+                                        <input style="margin-left:5px;" type="checkbox" checked name="perms" value="@perm.IdPermissao" /> @perm.NomePermissao
+                                        addedperms.Add(perm);
+                                    }
+
+                                }
+                            }
+                            if (!addedperms.Contains(perm))
+                            {
+                                <input style="margin-left:5px;" type="checkbox" name="perms" value="@perm.IdPermissao" /> @perm.NomePermissao
+                                addedperms.Add(perm);
+                            }
+
+
+                        }
+                        <input type="submit" value="Guardar" class="btn btn-primary" style="margin-left:20px;" />
+                        <a asp-action="DeleteGroup" asp-route-id="@item.IdGrupo" class="btn btn-danger" data-ajax="true" data-ajax-method="get"
+                   data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?" style="margin-left:20px;">Apagar</a>
+                    </form>
+
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

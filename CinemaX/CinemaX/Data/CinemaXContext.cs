@@ -135,6 +135,10 @@ namespace CinemaX.Data
 
             modelBuilder.Entity<ListaPermisso>(entity =>
             {
+                entity.HasKey(e => new { e.IdGrupo, e.IdPermissao })
+                .HasName("PK__ListaPer__83699CC0A13190B1");
+
+
                 entity.HasOne(d => d.IdGrupoNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdGrupo)
