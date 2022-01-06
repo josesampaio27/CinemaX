@@ -1,0 +1,32 @@
+﻿@model IEnumerable<CinemaX.Models.Categorium>
+
+<table class="table" id="Tabela">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td id="Col_@item.IdCategoria">
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    <a asp-action="EditCategory" asp-route-id="@item.IdCategoria" class="btn btn-primary"
+                       data-ajax="true" data-ajax-method="get"
+                       data-ajax-mode="replace" data-ajax-update="#Col_@item.IdCategoria">Editar</a> 
+                </td>
+                <td>
+                    <a asp-action="DeleteCategory" asp-route-id="@item.IdCategoria" class="btn btn-danger" data-ajax="true" data-ajax-method="get"
+                       data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Aapagar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
