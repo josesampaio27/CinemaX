@@ -1,0 +1,48 @@
+﻿@model CinemaX.Models.Utilizador
+
+@{
+    ViewData["Title"] = "View"; 
+}
+
+<h1>View</h1>
+
+<h4>Utilizador</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AccountActivate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdUtilizador" />
+            <input type="hidden" asp-for="UserName" />
+            <input type="hidden" asp-for="IdGrupo" />
+            <input type="hidden" asp-for="Perfil.Email" />
+            <div class="form-group">
+                <label asp-for="UserPassWord" class="control-label"></label>
+                <input asp-for="UserPassWord" class="form-control" />
+                <span asp-validation-for="UserPassWord" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Perfil.Nome" class="control-label"></label>
+                <input asp-for="Perfil.Nome" class="form-control" />
+                <span asp-validation-for="Perfil.Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Perfil.DataNascimento" class="control-label"></label>
+                <input asp-for="Perfil.DataNascimento" class="form-control" />
+                <span asp-validation-for="Perfil.DataNascimento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Perfil.Telemovel" class="control-label"></label>
+                <input asp-for="Perfil.Telemovel" class="form-control" />
+                <span asp-validation-for="Perfil.Telemovel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

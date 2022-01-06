@@ -1,0 +1,29 @@
+﻿@model IEnumerable<CinemaX.Models.GrupoPermisso>
+
+@{
+    ViewData["Title"] = "Grupos de permissões";
+    Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
+}
+
+<h1>Grupos de permissoes</h1>
+
+<form asp-action="AddGroup" data-ajax="true"
+      data-ajax-method="post" data-ajax-mode="replace"
+      data-ajax-update="#Tabela" data-ajax-success="sucesso">
+    <input id="inp" type="text" name="NewName" />
+    <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;"/>
+</form>
+
+<partial name="PermissoesPartial" model="Model" />
+
+
+
+@section Scripts{    
+    <script>
+            function sucesso() {
+                $("#inp").val("");
+        }
+    </script>
+
+
+}

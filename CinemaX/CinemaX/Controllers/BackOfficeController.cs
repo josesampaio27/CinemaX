@@ -13,20 +13,170 @@ using Microsoft.AspNetCore.Http;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using System.Threading;
 using System.Globalization;
+using System.Security.Cryptography;
+using CinemaX.Services;
 
 namespace CinemaX.Controllers
 {
     public class BackOfficeController : Controller
     {
         private readonly CinemaXContext _context;
+        private readonly IEmailSender _emailSender;
         private readonly IHostEnvironment _he;
         private readonly INotyfService _notyf;
+        static readonly char[] availableCharacters = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
+  };
 
-        public BackOfficeController(CinemaXContext context, IHostEnvironment e, INotyfService notyf)
+        public BackOfficeController(CinemaXContext context, IHostEnvironment e, INotyfService notyf, IEmailSender emailSender)
         {
             _context = context;
             _he = e;
             _notyf = notyf;
+            _emailSender = emailSender;
+        }
+
+        public IActionResult AddGroup(string NewName)
+        {
+            GrupoPermisso grupo = new GrupoPermisso();
+            grupo.NomeGrupo = NewName;
+            _context.GrupoPermissoes.Add(grupo);
+            _context.SaveChanges();
+
+            ViewBag.Permissoes = _context.Permissoes;
+            ViewBag.ListaPerm = _context.ListaPermissoes;
+            return PartialView("PermissoesPartial", _context.GrupoPermissoes);
+        }
+
+        public async Task<IActionResult> DeleteUser(int Id)
+        {
+            Perfil P = _context.Perfils.Find(Id);
+            Utilizador U = _context.Utilizadors.Find(Id);
+            _context.Perfils.Remove(P);
+            _context.Utilizadors.Remove(U);
+            await _context.SaveChangesAsync();          
+            
+            return PartialView("UserPartial", _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation));
+        }
+
+        public async Task<IActionResult> DeleteGroup(int Id)
+        {
+            if (_context.ListaPermissoes.FirstOrDefault(l => l.IdGrupo == Id) != null)
+            {
+                _notyf.Error("Impossivel eliminar enquanto contiver permissões");
+            }
+            else
+            {
+                GrupoPermisso G = _context.GrupoPermissoes.FirstOrDefault(x => x.IdGrupo == Id);
+                _context.GrupoPermissoes.Remove(G);
+                await _context.SaveChangesAsync();
+            }
+
+            ViewBag.Permissoes = _context.Permissoes;
+            ViewBag.ListaPerm = _context.ListaPermissoes;
+            return PartialView("PermissoesPartial", _context.GrupoPermissoes);
+        }
+
+            //Get
+            public async Task<IActionResult> Permissoes()
+        {
+            ViewBag.Permissoes = _context.Permissoes;
+            ViewBag.ListaPerm = _context.ListaPermissoes;
+
+            var cinemaXContext = _context.GrupoPermissoes;
+           
+            return View(await cinemaXContext.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveGroups(int id, int []perms)
+        {
+            GrupoPermisso grupo = _context.GrupoPermissoes.Find(id);
+
+            foreach(ListaPermisso perm in _context.ListaPermissoes)
+            {
+                if (perm.IdGrupo == grupo.IdGrupo)
+                    _context.ListaPermissoes.Remove(perm);
+            }
+
+            foreach(int perm in perms)
+            {
+                ListaPermisso lista = new ListaPermisso() ;
+                lista.IdGrupo = grupo.IdGrupo;
+                lista.IdPermissao = perm;
+                _context.ListaPermissoes.Add(lista);
+            }
+
+            await _context.SaveChangesAsync();
+            ViewBag.Permissoes = _context.Permissoes;
+            ViewBag.ListaPerm = _context.ListaPermissoes;
+            _notyf.Success("Guardado com sucesso");
+            return PartialView("PermissoesPartial", _context.GrupoPermissoes);
+        }
+
+        // GET: Utilizadors
+        public async Task<IActionResult> UserList()
+        {
+            var cinemaXContext = _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation);
+            return View(await cinemaXContext.ToListAsync());
+        }
+
+        public IActionResult AddUser()
+        {
+            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo");
+            return View();
+        }
+
+        //Get
+        public IActionResult EditUser(int Id)
+        {
+            Utilizador a = _context.Utilizadors.Include(x=> x.IdGrupoNavigation).SingleOrDefault(x => x.IdUtilizador == Id);
+            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo");
+            return PartialView("EditUserRole", a);
+        }
+
+        [HttpPost]
+        public string EditUser(int id, Utilizador p)
+        {
+            _context.Update(p);
+            _context.SaveChanges();
+            p.IdGrupoNavigation = _context.GrupoPermissoes.FirstOrDefault(g => g.IdGrupo == p.IdGrupo);
+            return p.IdGrupoNavigation.NomeGrupo;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUser([Bind("UserName,IdGrupo")] Utilizador utilizador, [Bind("Email")] Perfil perfil)
+        {
+            if (_context.Utilizadors.Where(u => u.UserName == utilizador.UserName).Count() != 0)
+                ModelState.AddModelError("UserName", "Nome de utilizador ja existente");
+
+            if (_context.Perfils.Where(u => u.Email == perfil.Email).Count() != 0)
+                ModelState.AddModelError("Perfil.Email", "email ja registrado");
+
+            
+                utilizador.UserPassWord = "temp";
+                utilizador.ActivationCode = GenerateNewCode(25);
+
+                _context.Add(utilizador);
+
+                await _context.SaveChangesAsync();
+
+                perfil.IdUtilizador = utilizador.IdUtilizador;
+                perfil.IdUtilizadorNavigation = utilizador;
+                perfil.DataNascimento = DateTime.Now;
+                perfil.Nome = "temp";
+                perfil.Telemovel = 928888888;
+                _context.Add(perfil);
+
+                await _context.SaveChangesAsync();
+
+                EnviaEmail(perfil.Email, utilizador.ActivationCode, utilizador.UserName);
+
+                return RedirectToAction(nameof(UserList));                   
         }
 
         // GET: BackOffice/FilmList
@@ -557,6 +707,57 @@ namespace CinemaX.Controllers
                 return false;
 
             return true;
+        }
+
+        //Function
+        public static string GenerateNewCode(int length)
+        {
+            char[] identifier = new char[length];
+            byte[] randomData = new byte[length];
+
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(randomData);
+            }
+
+            for (int idx = 0; idx < identifier.Length; idx++)
+            {
+                int pos = randomData[idx] % availableCharacters.Length;
+                identifier[idx] = availableCharacters[pos];
+            }
+
+            return new string(identifier);
+        }
+
+        //Funciton
+        public void EnviaEmail(string email, string code, string user)
+        {
+            int? id = HttpContext.Session.GetInt32("IdUtilizador");
+
+
+            string Destino, Assunto, Mensagem;
+
+            string Url = "https://localhost:44341/Utilizadors/AccountActivate/" + code;
+
+            Destino = email;
+            Assunto = "Foi convidado a se registrar no webiste CinemaX";
+            Mensagem = "<h1>Bem vindo ao CinemaX</h1> <br/>A sua conta foi criada por um administrador, o seu nome de utilizador é"+ user +", acabe o registro no link a baixo" +
+            "<br/><a href=\"" + Url + "\">Clique aqui para completar a sua conta</a>";
+            TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();
+        }
+
+        //Funciton
+        public async Task TesteEnvioEmail(string email, string assunto, string mensagem)
+        {
+            try
+            {
+                //email destino, assunto do email, mensagem a enviar
+                await _emailSender.SendEmailAsync(email, assunto, mensagem);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }

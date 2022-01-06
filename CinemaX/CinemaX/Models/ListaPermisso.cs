@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaX.Models
 {
-    [Keyless]
+
     public partial class ListaPermisso
     {
+        [Key, Column(Order = 0)]
         public int IdGrupo { get; set; }
+        [Key, Column(Order = 1)]
         public int IdPermissao { get; set; }
 
         [ForeignKey(nameof(IdGrupo))]

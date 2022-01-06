@@ -36,11 +36,45 @@ namespace CinemaX.Controllers
             _notyf = notyf;
         }
 
-        // GET: Utilizadors
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("Utilizadors/AccountActivate/{*code}")]
+        public IActionResult AccountActivate(string code)
         {
-            var cinemaXContext = _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation);
-            return View(await cinemaXContext.ToListAsync());
+            Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);           
+            if (user != null)
+            {
+                user.Perfil = _context.Perfils.Find(user.IdUtilizador);
+                user.Perfil.DataNascimento = DateTime.Now;
+                user.Perfil.Nome = null;
+                user.Perfil.Telemovel = 9;
+
+                return View(user);
+            }
+
+            return RedirectToAction("ActivationError", "Utilizadors");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AccountActivate([Bind("UserPassWord,IdUtilizador,IdGrupo,UserName")] Utilizador utilizador, [Bind("Nome,DataNascimento,Telemovel,Email")] Perfil perfil)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                utilizador.ActivationCode = "Activated";
+                string Hash = GetStringSha256Hash(utilizador.UserPassWord);
+                utilizador.UserPassWord = Hash;
+
+                _context.Update(utilizador);
+                await _context.SaveChangesAsync();
+
+                perfil.IdUtilizador = utilizador.IdUtilizador;
+                _context.Update(perfil);
+                await _context.SaveChangesAsync();             
+                return RedirectToAction("Index","Home");
+            }
+            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
+            return View(utilizador);
         }
 
         // GET: Utilizadors/Register
