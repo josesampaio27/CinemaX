@@ -53,12 +53,21 @@
                 @Categoria.IdCategoriaNavigation.Nome;
                 if (CategoriasCount != 0)
                 {<label>,</label> }
-                else 
+                else
                 {<label>.</label>}
 
             }
         </dd>
     </dl>
+
+    <h4>Sessões:</h4>
+    @foreach (Sessao sessao in Model.Sessaos)
+    {
+        <a asp-action="ComprarBilhete" asp-route-id="@sessao.IdSessao" class="btn btn-primary" style="margin-left:5px;">@sessao.Data</a>
+    }
+
+
+
     <br/>
     <h4>Trailer:</h4>
     <div id="player"></div>
@@ -105,4 +114,4 @@
             player.stopVideo();
         }
     </script>
-</div>
+    </div>

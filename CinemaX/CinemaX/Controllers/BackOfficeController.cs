@@ -43,6 +43,12 @@ namespace CinemaX.Controllers
         //Post
         public IActionResult AddCategory(string NewName)
         {
+            if (NewName == null)
+            {
+                _notyf.Error("Não é possivel adicionar uma categoria sem nome");
+                return PartialView("CategoryListPartial", _context.Categoria);
+            }
+
             Categorium cat = new Categorium();
             cat.Nome = NewName;
             _context.Categoria.Add(cat);
@@ -104,6 +110,14 @@ namespace CinemaX.Controllers
         //Post
         public IActionResult AddGroup(string NewName)
         {
+            if (NewName == null)
+            {
+                _notyf.Error("Não é possivel adicionar um Grupo sem nome");
+                ViewBag.Permissoes = _context.Permissoes;
+                ViewBag.ListaPerm = _context.ListaPermissoes;
+                return PartialView("PermissoesPartial", _context.GrupoPermissoes);
+            }
+
             GrupoPermisso grupo = new GrupoPermisso();
             grupo.NomeGrupo = NewName;
             _context.GrupoPermissoes.Add(grupo);
@@ -431,10 +445,15 @@ namespace CinemaX.Controllers
        
         //POST: BackOffice/AddRoom
         [HttpPost]
-        public async Task<IActionResult> AddRoom(int number)
+        public async Task<IActionResult> AddRoom(int? number)
         {
+            if (number == null)
+            {
+                _notyf.Error("Não é possivel adicionar uma sala sem capacidade");
+                return PartialView("RoomsPartial", _context.Salas);
+            }
             Sala sala = new Sala();
-            sala.Capacidade = number;
+            sala.Capacidade = (int)number;
             sala.DataAdicionada = DateTime.Now.Date;
             sala.IdCreationUser = (int)HttpContext.Session.GetInt32("IdUtilizador");
             _context.Add(sala);

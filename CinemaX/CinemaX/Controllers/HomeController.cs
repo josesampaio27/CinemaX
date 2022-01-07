@@ -24,6 +24,26 @@ namespace CinemaX.Controllers
             _context = context;
         }
 
+        public IActionResult ComprarBilhete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sessao sessao = _context.Sessaos.Find(id);
+
+            if(sessao == null)
+            {
+                return NotFound();
+            }
+
+            sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
+            sessao.NumeroNavigation = _context.Salas.Find(sessao.Numero);
+
+            return View(sessao);
+        }
+
         public IActionResult Index()
         {
 
@@ -52,13 +72,13 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
-            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes)
+            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes).Include(u=>u.Sessaos)
                 .FirstOrDefaultAsync(m => m.IdFilme == id);
 
             foreach (var cat in filme.CategoriasFilmes)
             {
                 filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
-            }
+            }           
 
             return View(filme);
         }
