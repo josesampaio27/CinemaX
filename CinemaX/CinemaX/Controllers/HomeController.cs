@@ -24,6 +24,12 @@ namespace CinemaX.Controllers
             _context = context;
         }
 
+        //public IActionResult Comprar()
+        //{
+
+        //}
+
+        //Get
         public IActionResult ComprarBilhete(int? id)
         {
             if (id == null)

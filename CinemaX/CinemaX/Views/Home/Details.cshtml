@@ -6,46 +6,44 @@
     string duracao = Model.Duracao + "h";
 }
 
-<h1>Details</h1>
-
-<div>
+<div class="mydiv">
     <h4>Filme</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nome)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Nome)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Realizador)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Realizador)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Data)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Data)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Descrição)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Descrição)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Duracao)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @duracao
         </dd>
         <dt class="col-sm-2">
             Categorias:
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext">
             @{int CategoriasCount = Model.CategoriasFilmes.Count; }
             @foreach (var Categoria in Model.CategoriasFilmes)
             {
@@ -68,7 +66,8 @@
 
 
 
-    <br/>
+    <br />
+    <br />
     <h4>Trailer:</h4>
     <div id="player"></div>
 
@@ -114,4 +113,4 @@
             player.stopVideo();
         }
     </script>
-    </div>
+</div>

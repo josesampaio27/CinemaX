@@ -6,42 +6,42 @@
 
 <h1>ComprarBilhete</h1>
 
-<div>
+<div class="mydiv">
     <h4>Sessao</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Data)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Data)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Preço)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Preço)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Vagas)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Vagas)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IdFilmeNavigation)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IdFilmeNavigation.Nome)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.NumeroNavigation)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NumeroNavigation.Numero)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Comprar" class="btn btn-primary" style="background-color:green;border-color:black;" asp-route-id="@Model.IdSessao">Comprar</a>
+
+    <a asp-action="Comprar" class="btn btn-primary" style="background-color:green;" asp-route-id="@Model.IdSessao">Comprar</a>
+    <a asp-action="Details" class="btn btn-danger" asp-route-id="@Model.IdFilme" style="margin-left:10px;">Cancelar</a>
 </div>
