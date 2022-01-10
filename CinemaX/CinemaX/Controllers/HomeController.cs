@@ -1,6 +1,7 @@
 ﻿using CinemaX.Data;
 using CinemaX.Models;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,49 @@ namespace CinemaX.Controllers
         {
             _logger = logger;
             _context = context;
+        }
+
+        public async Task<IActionResult> Comprar(int id, int numero)
+        {
+            for (int i = numero; i > 0; i--)
+            {
+                Sessao sessao = _context.Sessaos.Find(id);
+
+                Bilhete bilhete = new Bilhete();
+                Utilizador utilizador = _context.Utilizadors.Find(HttpContext.Session.GetInt32("IdUtilizador"));
+
+                bilhete.IdSessao = sessao.IdSessao;
+                bilhete.IdSessaoNavigation = sessao;
+                bilhete.IdUtilizador = utilizador.IdUtilizador;
+                bilhete.IdUtilizadorNavigation = utilizador;
+
+
+                _context.Add(bilhete);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //Get
+        public IActionResult ComprarBilhete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Sessao sessao = _context.Sessaos.Find(id);
+
+            if(sessao == null)
+            {
+                return NotFound();
+            }
+
+            sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
+            sessao.NumeroNavigation = _context.Salas.Find(sessao.Numero);
+
+            return View(sessao);
         }
 
         public IActionResult Index()
@@ -52,13 +96,13 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
-            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes)
+            var filme = await _context.Filmes.Include(u => u.CategoriasFilmes).Include(u=>u.Sessaos)
                 .FirstOrDefaultAsync(m => m.IdFilme == id);
 
             foreach (var cat in filme.CategoriasFilmes)
             {
                 filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
-            }
+            }           
 
             return View(filme);
         }
