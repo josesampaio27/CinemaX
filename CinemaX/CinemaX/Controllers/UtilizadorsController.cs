@@ -12,6 +12,10 @@ using CinemaX.Services;
 using Microsoft.AspNetCore.Hosting;
 using System.Security.Cryptography;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using QRCoder;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace CinemaX.Controllers
 {
@@ -91,6 +95,41 @@ namespace CinemaX.Controllers
             return View();
         }
 
+        public async Task<IActionResult> HistoricoBilhetes(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
+
+            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+
+            if (_context.Bilhetes.FirstOrDefault(b => b.IdUtilizador == Perfil.IdUtilizador) != null)
+            {
+                List<Bilhete> list = new List<Bilhete>();
+
+                foreach (Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b => b.IdSessaoNavigation.NumeroNavigation))
+                {
+                    if (bilhete.IdUtilizador == Perfil.IdUtilizador)
+                    {
+                        list.Add(bilhete);
+                        ViewData[bilhete.NumBilhete.ToString()] = GenerateQRCode("Sessao:" + bilhete.IdSessao + ";NumBilhete:" + bilhete.NumBilhete + ";");
+                    }
+                }
+
+                list.Reverse();
+
+                ViewBag.Bilhetes = list;
+            }
+
+            return View(Perfil);
+        }
+
         public async Task<IActionResult> Perfil(int? id)
         {
             if (id == null)
@@ -118,7 +157,43 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
+            if(_context.Bilhetes.FirstOrDefault(b=> b.IdUtilizador == Perfil.IdUtilizador) != null)
+            {
+                List<Bilhete> list = new List<Bilhete>();
+
+                foreach(Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b=>b.IdSessaoNavigation.NumeroNavigation))
+                {
+                    if (bilhete.IdUtilizador == Perfil.IdUtilizador)
+                    {
+                        list.Add(bilhete);
+                        ViewData[bilhete.NumBilhete.ToString()] = GenerateQRCode("Sessao:"+bilhete.IdSessao+";NumBilhete:"+bilhete.NumBilhete+";");
+                    }
+                }
+
+
+                list.Reverse();
+
+                if (list.Count > 5)
+                    ViewBag.Bilhete = list.Take(5);
+                else
+                    ViewBag.Bilhete = list;
+
+            }
+
             return View(Perfil);
+        }
+
+        public string GenerateQRCode(string QRString)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(QRString, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap bitMap = qrCode.GetGraphic(20);
+                bitMap.Save(ms, ImageFormat.Png);
+                return "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+            }
         }
 
         public IActionResult EditarCategoriasFavoritas()

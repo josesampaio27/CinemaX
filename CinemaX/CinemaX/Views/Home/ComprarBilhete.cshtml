@@ -41,7 +41,12 @@
             @Html.DisplayFor(model => model.NumeroNavigation.Numero)
         </dd>
     </dl>
-
-    <a asp-action="Comprar" class="btn btn-primary" style="background-color:green;" asp-route-id="@Model.IdSessao">Comprar</a>
-    <a asp-action="Details" class="btn btn-danger" asp-route-id="@Model.IdFilme" style="margin-left:10px;">Cancelar</a>
+    <form asp-action="Comprar" asp-route-id="@Model.IdSessao">
+        <label style="font-weight:bold;">Quantidade:</label>
+        <br />
+        <input type="number" name="numero" value="1" style="width: 92px;"/>
+        <input type="submit" class="btn btn-primary" style="background-color: green; margin-left: 10px;" value="Comprar"/>
+        <a asp-action="Details" class="btn btn-danger" asp-route-id="@Model.IdFilme" style="margin-left:10px;">Cancelar</a>
+    </form>
 </div>
+

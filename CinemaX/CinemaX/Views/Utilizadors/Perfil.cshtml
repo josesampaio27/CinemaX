@@ -59,9 +59,38 @@
                 }
             </dd>
         }
-            <dt style="margin-left:14px">
-                <br />
-                <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
-            </dt>
-        </dl>
+        <dt style="margin-left:14px">
+            <br />
+            <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
+        </dt>
+    </dl>
+
+    <label>Ultimos bilhetes:</label>
+    <br />
+    @if (ViewBag.Bilhete != null)
+    {
+    <div>
+        @foreach (Bilhete bilhete in ViewBag.Bilhete)
+        {
+        <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top;">
+            <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
+            <br />
+            @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome
+            <br />
+            Sala:@bilhete.IdSessaoNavigation.NumeroNavigation.Numero
+            <br />
+            Data:@bilhete.IdSessaoNavigation.Data
+            <br />
+            <img src="@ViewData[bilhete.NumBilhete.ToString()]" alt="" style="height:150px;width:150px" />
+        </div>
+        }
+    </div>
+    <br />
+    <a asp-action="HistoricoBilhetes" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Historico de bilhetes</a>
+    }
+            else
+            {
+               <label>Ainda não comprou nenhum bilhete!!!</label>
+            }
 </div>
+

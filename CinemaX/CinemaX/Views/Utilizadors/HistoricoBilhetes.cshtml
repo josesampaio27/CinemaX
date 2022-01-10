@@ -1,0 +1,29 @@
+﻿@model CinemaX.Models.Perfil
+
+@{
+    ViewData["Title"] = "Historico";
+}
+
+@if (ViewBag.Bilhetes != null)
+{
+<div>
+    @foreach (Bilhete bilhete in ViewBag.Bilhetes)
+    {
+    <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top; margin-bottom:15px;">
+        <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
+        <br />
+        @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome
+        <br />
+        Sala:@bilhete.IdSessaoNavigation.NumeroNavigation.Numero
+        <br />
+        Data:@bilhete.IdSessaoNavigation.Data
+        <br />
+        <img src="@ViewData[bilhete.NumBilhete.ToString()]" alt="" style="height:150px;width:150px" />
+    </div>
+    }
+</div>
+}
+            else
+            {
+                <label>Ainda não comprou nenhum bilhete!!!</label>
+            }

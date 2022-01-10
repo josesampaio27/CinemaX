@@ -1,6 +1,7 @@
 ﻿using CinemaX.Data;
 using CinemaX.Models;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,10 +25,27 @@ namespace CinemaX.Controllers
             _context = context;
         }
 
-        //public IActionResult Comprar()
-        //{
+        public async Task<IActionResult> Comprar(int id, int numero)
+        {
+            for (int i = numero; i > 0; i--)
+            {
+                Sessao sessao = _context.Sessaos.Find(id);
 
-        //}
+                Bilhete bilhete = new Bilhete();
+                Utilizador utilizador = _context.Utilizadors.Find(HttpContext.Session.GetInt32("IdUtilizador"));
+
+                bilhete.IdSessao = sessao.IdSessao;
+                bilhete.IdSessaoNavigation = sessao;
+                bilhete.IdUtilizador = utilizador.IdUtilizador;
+                bilhete.IdUtilizadorNavigation = utilizador;
+
+
+                _context.Add(bilhete);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
 
         //Get
         public IActionResult ComprarBilhete(int? id)
