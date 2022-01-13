@@ -1,7 +1,7 @@
 ﻿@model CinemaX.Models.Filme
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Nome;
 
     string duracao = Model.Duracao + "h";
 }
@@ -59,17 +59,27 @@
     </dl>
 
     <h4>Sessões:</h4>
+    @if (Model.Sessaos.Count == 0)
+    {
+                <label>Não existem sessões para este filme.</label>
+    }
+    else
+    {
     @foreach (Sessao sessao in Model.Sessaos)
     {
         <a asp-action="ComprarBilhete" asp-route-id="@sessao.IdSessao" class="btn btn-primary" style="margin-left:5px;">@sessao.Data</a>
     }
-
+    }
 
 
     <br />
     <br />
     <h4>Trailer:</h4>
     <div id="player"></div>
+
+    <br />
+
+    <a asp-action="@ViewBag.Voltar" class="btn btn-danger">Voltar</a>
 
     <script>
         // 2. This code loads the IFrame Player API code asynchronously.

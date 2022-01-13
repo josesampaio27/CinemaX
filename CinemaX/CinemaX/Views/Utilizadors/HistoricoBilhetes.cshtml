@@ -4,12 +4,15 @@
     ViewData["Title"] = "Historico";
 }
 
+<a asp-action="Perfil" asp-route-id="@Model.IdUtilizador" class="btn btn-danger">Voltar</a>
+<br />
+<br />
 @if (ViewBag.Bilhetes != null)
 {
 <div>
     @foreach (Bilhete bilhete in ViewBag.Bilhetes)
     {
-    <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top; margin-bottom:15px;">
+    <div style="display: inline-block; background-color: ghostwhite; border-block-color: black; width: 200px; text-align: center; margin-right: 10px; vertical-align: top; margin-bottom: 15px; height: 542px; ">
         <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
         <br />
         @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome

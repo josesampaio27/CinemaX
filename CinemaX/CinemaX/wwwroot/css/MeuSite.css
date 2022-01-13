@@ -33,6 +33,10 @@ a {
     text-indent:100px;
 }
 
+.mytext-Bold{
+    font-weight:700;
+}
+
 .mytext{
     font-weight:600;
 }

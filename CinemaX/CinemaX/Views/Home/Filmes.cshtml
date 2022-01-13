@@ -1,41 +1,56 @@
 ﻿@model IEnumerable<CinemaX.Models.Categorium>
 
-    <form asp-action="Procurar" data-ajax="true"
-          data-ajax-method="post" data-ajax-mode="replace"
-          data-ajax-update="#TabFilmes" data-ajax-success="sucesso">
-        <div style="display: flex; border: solid; border-width: thin; border-color: black; padding: 20px; background-color: #72727296; align-items: center; ">
+@{
+    ViewData["Title"] = "Filmes";
+}
 
-            <div class="ui-widget">
-                <label for="nome">Nome:</label>
-                <input id="nome" name="NomeFilme" />
-            </div>
-            <div class="ui-widget" style="padding-left:40px">
-                <label for="Realizador">Realizador:</label>
-                <input id="Realizador" name="NomeRealizador" />
-            </div>
-            
-            <div style="padding-left: 40px;">
-                <label style="margin-left:18px;">Categorias:</label>
-                <ul style="overflow-y:scroll; max-height:100px;">
-                    @foreach (Categorium categorias in ViewBag.Categorias)
-                    {
-                        <li><input type="checkbox" name="IdCategorias" value="@categorias.IdCategoria" /> @categorias.Nome</li>
-                    }
-                </ul>
-            </div>
-            <div style="padding-left:40px">
-                <input type="submit" value="Procurar" class="btn btn-primary" />
-            </div>
+<form asp-action="Procurar" data-ajax="true"
+      data-ajax-method="post" data-ajax-mode="replace"
+      data-ajax-update="#TabFilmes" data-ajax-success="sucesso">
+    <div style="display: flex; border: solid; border-width: thin; border-color: black; padding: 20px; background-color: #72727296; align-items: center; " class="mytext">
 
-
+        <div class="ui-widget" style="width:min-content">
+            <label for="nome">Nome:</label>
+            <input id="nome" name="NomeFilme" />
         </div>
-    </form>
 
-    <partial name="Filme" />
+        <div class="ui-widget" style="padding-left: 20px; width: min-content">
+            <label for="Realizador">Realizador:</label>
+            <input id="Realizador" name="NomeRealizador" />
+        </div>
 
-    @section Scripts{
-        <script>
+        <div style="width: min-content; padding-left: 20px;">
+            <label>Data inicio:</label>
+            <input name="DataInicio" type="date" style="width:150px;" />
+        </div>
+
+        <div style="width: min-content; padding-left: 20px;">
+            <label>Data fim:</label>
+            <input name="DataFim" type="date" style="width:150px;" />
+        </div>
+
+        <div>
+            <label style="margin-left:18px;">Categorias:</label>
+            <ul style="overflow-y:scroll; max-height:100px;">
+                @foreach (Categorium categorias in ViewBag.Categorias)
+                {
+                    <li><input type="checkbox" name="IdCategorias" value="@categorias.IdCategoria" /> @categorias.Nome</li>
+                }
+            </ul>
+        </div>
+        <div style="padding-left:40px">
+            <input type="submit" value="Procurar" class="btn btn-primary" />
+        </div>
+
+
+    </div>
+</form>
+
+<partial name="Filme" />
+
+@section Scripts{
+    <script>
             $("#nome").autocomplete({ source: @ViewBag.NomeFilmes});
             $("#Realizador").autocomplete({ source: @ViewBag.NomeRealizador});
-        </script>
-    }
+    </script>
+}
