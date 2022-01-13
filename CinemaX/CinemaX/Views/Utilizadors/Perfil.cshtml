@@ -22,7 +22,7 @@
             @Html.DisplayFor(model => model.Email)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DataNascimento)
+            Data de nascimento
         </dt>
         <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.DataNascimento)
@@ -34,7 +34,7 @@
             @Html.DisplayFor(model => model.Telemovel)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
+            Username
         </dt>
         <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
@@ -65,14 +65,14 @@
         </dt>
     </dl>
 
-    <label>Ultimos bilhetes:</label>
+    <label style="font-weight:bold;">Ultimos bilhetes:</label>
     <br />
     @if (ViewBag.Bilhete != null)
     {
     <div>
         @foreach (Bilhete bilhete in ViewBag.Bilhete)
         {
-        <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top;">
+        <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top; height:542px;">
             <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
             <br />
             @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome

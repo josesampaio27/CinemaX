@@ -1,29 +1,27 @@
 ﻿@model CinemaX.Models.Utilizador
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Registo";
 }
 
-<h1>Create</h1>
-
-<h4>Utilizador</h4>
+<h1>Registo</h1>
 <hr />
-<div class="row">
+<div class="row mydiv mytext-Bold">
     <div class="col-md-4">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
+                <label class="control-label">Username</label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserPassWord" class="control-label"></label>
+                <label class="control-label">Password</label>
                 <input asp-for="UserPassWord" class="form-control" />
                 <span asp-validation-for="UserPassWord" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Perfil.Nome" class="control-label"></label>
+                <label class="control-label">Nome completo</label>
                 <input asp-for="Perfil.Nome" class="form-control" />
                 <span asp-validation-for="Perfil.Nome" class="text-danger"></span>
             </div>
@@ -33,12 +31,12 @@
                 <span asp-validation-for="Perfil.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Perfil.DataNascimento" class="control-label"></label>
+                <label class="control-label">Data de nascimento</label>
                 <input asp-for="Perfil.DataNascimento" class="form-control" />
                 <span asp-validation-for="Perfil.DataNascimento" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Perfil.Telemovel" class="control-label"></label>
+                <label class="control-label">Numero de telemovel</label>
                 <input asp-for="Perfil.Telemovel" class="form-control" />
                 <span asp-validation-for="Perfil.Telemovel" class="text-danger"></span>
             </div>           
@@ -50,7 +48,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" asp-controller="Home" class="mytext" style="color:black;">Voltar</a>
 </div>
 
 @section Scripts {
