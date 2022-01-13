@@ -18,9 +18,11 @@ namespace CinemaX.Models
 
         [Key]
         public int Numero { get; set; }
+        [Required]
         public int Capacidade { get; set; }
         public int IdCreationUser { get; set; }
         [Column(TypeName = "date")]
+        [DataType(DataType.Date)]
         public DateTime DataAdicionada { get; set; }
 
         [InverseProperty(nameof(Sessao.NumeroNavigation))]

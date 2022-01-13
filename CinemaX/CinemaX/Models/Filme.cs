@@ -14,7 +14,7 @@ namespace CinemaX.Models
         public Filme()
         {
             CategoriasFilmes = new HashSet<CategoriasFilme>();
-            Sessaos = new HashSet<Sessao>();
+            Sessaos = new HashSet<Sessao>();         
         }
 
         [Key]
@@ -35,12 +35,14 @@ namespace CinemaX.Models
         [DataType(DataType.Url)]
         public string LinkTrailer { get; set; }
         [Required(ErrorMessage = "O campo {0} é obrigatorio")]
-        [StringLength(500)]
+        [StringLength(500)]     
         public string Descrição { get; set; }
         [Required(ErrorMessage = "O campo {0} é obrigatorio")]
-        public decimal Duracao { get; set; }
+        [DataType(DataType.Time)]
+        public string Duracao { get; set; }
         public int IdCreationUser { get; set; }
         [Column(TypeName = "date")]
+        [DataType(DataType.Date)]
         public DateTime DataAdicionado { get; set; }
 
         [InverseProperty(nameof(CategoriasFilme.IdFilmeNavigation))]

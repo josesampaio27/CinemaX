@@ -1,0 +1,105 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: white;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: white;
+    border-color: #1861ac;
+}
+
+.navbar {
+    background-color: black;
+}
+
+.mytext-col2{
+    text-indent:100px;
+}
+
+.mytext-Bold{
+    font-weight:700;
+}
+
+.mytext{
+    font-weight:600;
+}
+
+.mydiv {
+    border: solid;
+    border-width: thin;
+    border-color: black;
+    padding: 20px;
+    background-color: #72727296;
+}
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background-image: url(../FotosSite/BaseCinema.png);
+    background-attachment: fixed;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  background-color:black;
+  line-height: 60px; /* Vertically center the text there */
+}
+
+/*buttons*/
+.btn{
+    border-color:black;
+}

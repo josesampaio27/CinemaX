@@ -1,0 +1,61 @@
+﻿@model IEnumerable<CinemaX.Models.Perfil>
+
+<table class="table" id="Tabela">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telemovel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNascimento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.UserName)
+                </td>
+                <td >
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telemovel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataNascimento)
+                </td>
+                <td id="Col_@item.IdUtilizador">
+                    @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)
+                </td>
+                <td>
+                    <a asp-action="EditUser" asp-route-id="@item.IdUtilizador" class="btn btn-primary"
+                       data-ajax="true" data-ajax-method="get"
+                       data-ajax-mode="replace" data-ajax-update="#Col_@item.IdUtilizador">Editar</a>                
+                </td>
+                <td>
+                    <a asp-action="DeleteUser" asp-route-id="@item.IdUtilizador" class="btn btn-danger" data-ajax="true" data-ajax-method="get"
+                       data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

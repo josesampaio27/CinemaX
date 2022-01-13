@@ -12,7 +12,10 @@ using CinemaX.Services;
 using Microsoft.AspNetCore.Hosting;
 using System.Security.Cryptography;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Identity;
+using QRCoder;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace CinemaX.Controllers
 {
@@ -27,6 +30,7 @@ namespace CinemaX.Controllers
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
   };
+
        private readonly INotyfService _notyf;
 
         public UtilizadorsController(CinemaXContext context, IEmailSender emailSender, INotyfService notyf)
@@ -36,11 +40,45 @@ namespace CinemaX.Controllers
             _notyf = notyf;
         }
 
-        // GET: Utilizadors
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("Utilizadors/AccountActivate/{*code}")]
+        public IActionResult AccountActivate(string code)
         {
-            var cinemaXContext = _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation);
-            return View(await cinemaXContext.ToListAsync());
+            Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);           
+            if (user != null)
+            {
+                user.Perfil = _context.Perfils.Find(user.IdUtilizador);
+                user.Perfil.DataNascimento = DateTime.Now;
+                user.Perfil.Nome = null;
+                user.Perfil.Telemovel = 9;
+
+                return View(user);
+            }
+
+            return RedirectToAction("ActivationError", "Utilizadors");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AccountActivate([Bind("UserPassWord,IdUtilizador,IdGrupo,UserName")] Utilizador utilizador, [Bind("Nome,DataNascimento,Telemovel,Email")] Perfil perfil)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                utilizador.ActivationCode = "Activated";
+                string Hash = GetStringSha256Hash(utilizador.UserPassWord);
+                utilizador.UserPassWord = Hash;
+
+                _context.Update(utilizador);
+                await _context.SaveChangesAsync();
+
+                perfil.IdUtilizador = utilizador.IdUtilizador;
+                _context.Update(perfil);
+                await _context.SaveChangesAsync();             
+                return RedirectToAction("Index","Home");
+            }
+            ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
+            return View(utilizador);
         }
 
         // GET: Utilizadors/Register
@@ -55,6 +93,41 @@ namespace CinemaX.Controllers
                 _notyf.Success("Utilizador confirmado com sucesso");
 
             return View();
+        }
+
+        public async Task<IActionResult> HistoricoBilhetes(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
+
+            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+
+            if (_context.Bilhetes.FirstOrDefault(b => b.IdUtilizador == Perfil.IdUtilizador) != null)
+            {
+                List<Bilhete> list = new List<Bilhete>();
+
+                foreach (Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b => b.IdSessaoNavigation.NumeroNavigation))
+                {
+                    if (bilhete.IdUtilizador == Perfil.IdUtilizador)
+                    {
+                        list.Add(bilhete);
+                        ViewData[bilhete.NumBilhete.ToString()] = GenerateQRCode("Sessao:" + bilhete.IdSessao + ";NumBilhete:" + bilhete.NumBilhete + ";");
+                    }
+                }
+
+                list.Reverse();
+
+                ViewBag.Bilhetes = list;
+            }
+
+            return View(Perfil);
         }
 
         public async Task<IActionResult> Perfil(int? id)
@@ -75,7 +148,8 @@ namespace CinemaX.Controllers
 
             foreach (var cat in _context.CategoriasFavoritas)
             {
-                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                if(_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
             }
 
             if (Perfil == null)
@@ -83,10 +157,46 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
+            if(_context.Bilhetes.FirstOrDefault(b=> b.IdUtilizador == Perfil.IdUtilizador) != null)
+            {
+                List<Bilhete> list = new List<Bilhete>();
+
+                foreach(Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b=>b.IdSessaoNavigation.NumeroNavigation))
+                {
+                    if (bilhete.IdUtilizador == Perfil.IdUtilizador)
+                    {
+                        list.Add(bilhete);
+                        ViewData[bilhete.NumBilhete.ToString()] = GenerateQRCode("Sessao:"+bilhete.IdSessao+";NumBilhete:"+bilhete.NumBilhete+";");
+                    }
+                }
+
+
+                list.Reverse();
+
+                if (list.Count > 5)
+                    ViewBag.Bilhete = list.Take(5);
+                else
+                    ViewBag.Bilhete = list;
+
+            }
+
             return View(Perfil);
         }
 
-        public async Task<IActionResult> EditarCategoriasFavoritas()
+        public string GenerateQRCode(string QRString)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(QRString, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap bitMap = qrCode.GetGraphic(20);
+                bitMap.Save(ms, ImageFormat.Png);
+                return "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+            }
+        }
+
+        public IActionResult EditarCategoriasFavoritas()
         {
             if (HttpContext.Session.GetInt32("IdUtilizador") == null)
             {
@@ -95,11 +205,15 @@ namespace CinemaX.Controllers
 
             int id = (int)HttpContext.Session.GetInt32("IdUtilizador");
 
-            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+            var Perfil = _context.Perfils.Include(p=> p.IdUtilizadorNavigation).FirstOrDefault(m => m.IdUtilizador == id);
 
             foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
             {
-                Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == cat.IdUtilizador).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                if (_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
+                {
+                    cat.IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.Add(cat);                        
+                }
             }
 
             ViewBag.Categorias = _context.Categoria;
@@ -230,7 +344,7 @@ namespace CinemaX.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
+        public IActionResult Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
         {
             if (ModelState.IsValid)
             {
@@ -267,7 +381,7 @@ namespace CinemaX.Controllers
                 HttpContext.Session.SetString("Permissoes", permissoes);
 
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("index","Home");
             }           
             return View(utilizador);
         }
@@ -360,9 +474,9 @@ namespace CinemaX.Controllers
                 //email destino, assunto do email, mensagem a enviar
                 await _emailSender.SendEmailAsync(email, assunto, mensagem);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 

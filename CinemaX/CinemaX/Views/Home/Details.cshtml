@@ -1,0 +1,126 @@
+﻿@model CinemaX.Models.Filme
+
+@{
+    ViewData["Title"] = Model.Nome;
+
+    string duracao = Model.Duracao + "h";
+}
+
+<div class="mydiv">
+    <h4>Filme</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Realizador)
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @Html.DisplayFor(model => model.Realizador)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Data)
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Descrição)
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @Html.DisplayFor(model => model.Descrição)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Duracao)
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @duracao
+        </dd>
+        <dt class="col-sm-2">
+            Categorias:
+        </dt>
+        <dd class="col-sm-10 mytext">
+            @{int CategoriasCount = Model.CategoriasFilmes.Count; }
+            @foreach (var Categoria in Model.CategoriasFilmes)
+            {
+                CategoriasCount--;
+                @Categoria.IdCategoriaNavigation.Nome;
+                if (CategoriasCount != 0)
+                {<label>,</label> }
+                else
+                {<label>.</label>}
+
+            }
+        </dd>
+    </dl>
+
+    <h4>Sessões:</h4>
+    @if (Model.Sessaos.Count == 0)
+    {
+                <label>Não existem sessões para este filme.</label>
+    }
+    else
+    {
+    @foreach (Sessao sessao in Model.Sessaos)
+    {
+        <a asp-action="ComprarBilhete" asp-route-id="@sessao.IdSessao" class="btn btn-primary" style="margin-left:5px;">@sessao.Data</a>
+    }
+    }
+
+
+    <br />
+    <br />
+    <h4>Trailer:</h4>
+    <div id="player"></div>
+
+    <br />
+
+    <a asp-action="@ViewBag.Voltar" class="btn btn-danger">Voltar</a>
+
+    <script>
+        // 2. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: '@Model.LinkTrailer.Remove(0,32)',
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'autoplay': 0
+                }
+            });
+        }
+
+        // 4. The API will call this function when the video player is ready.
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // 5. The API calls this function when the player's state changes.
+        //    The function indicates that when playing a video (state=1),
+        //    the player should play for six seconds and then stop.
+        var done = false;
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+                setTimeout(stopVideo, 6000);
+                done = true;
+            }
+        }
+        function stopVideo() {
+            player.stopVideo();
+        }
+    </script>
+</div>

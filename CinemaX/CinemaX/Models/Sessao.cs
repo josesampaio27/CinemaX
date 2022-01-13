@@ -20,10 +20,13 @@ namespace CinemaX.Models
         public int Numero { get; set; }
         [Key]
         public int IdSessao { get; set; }
-        [Column("Data_", TypeName = "date")]
+        [Column("Data_", TypeName = "datetime")]
         public DateTime Data { get; set; }
         [Column(TypeName = "money")]
         public decimal Preço { get; set; }
+        [NotMapped]
+        [Range(0, 99.99)]             
+        public string Preço_string { get; set; }
         public int Vagas { get; set; }
 
         [ForeignKey(nameof(IdFilme))]

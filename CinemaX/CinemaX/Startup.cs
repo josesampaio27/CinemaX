@@ -74,7 +74,12 @@ namespace CinemaX
                 endpoints.MapControllerRoute(
                    name: "filtered",
                    pattern: "Filter/{*code}",
-                   defaults: new { Controller = "Utilizadors", Action = "Activate" });                 
+                   defaults: new { Controller = "Utilizadors", Action = "Activate" });
+
+                endpoints.MapControllerRoute(
+                   name: "filtered",
+                   pattern: "Filter/{*code}",
+                   defaults: new { Controller = "Utilizadors", Action = "ActivateRegister" });
 
 
                 endpoints.MapControllerRoute(

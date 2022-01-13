@@ -1,0 +1,25 @@
+﻿@model IEnumerable<CinemaX.Models.Categorium>
+
+@{
+    ViewData["Title"] = "CategoryList";
+    Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
+}
+
+<h1>CategoryList</h1>
+
+<form asp-action="AddCategory" data-ajax="true"
+      data-ajax-method="post" data-ajax-mode="replace"
+      data-ajax-update="#Tabela" data-ajax-success="sucesso">
+    <input id="inp" type="text" name="NewName" />
+    <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;" />
+</form>
+
+<partial name="CategoryListPartial" model="Model" />
+
+@section Scripts{
+    <script>
+            function sucesso() {
+                $("#inp").val("");
+            }
+    </script>
+}
