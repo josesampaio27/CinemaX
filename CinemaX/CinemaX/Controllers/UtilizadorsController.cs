@@ -386,6 +386,66 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+        [HttpGet]
+        public IActionResult EditarPerfil(int? id)
+        {
+            Perfil perfil = _context.Perfils.FirstOrDefault(p => p.IdUtilizador == id);
+
+            return View(perfil);
+        }
+        //[HttpGet]
+        //public async Task<IActionResult> EditarPerfil(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var utilizador = await _context.Utilizadors.FindAsync(id);
+        //    if (utilizador == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(utilizador.Perfil);
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> EditarPerfil(int id, Perfil perfil)
+        {
+            if (id != perfil.IdUtilizador)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(perfil);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PerfilExists(perfil.IdUtilizador))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(perfil);
+        }
+
+        private bool PerfilExists(int id)
+        {
+            return _context.Perfils.Any(e => e.IdUtilizador == id);
+        }
+
+
         private bool UtilizadorExists(int id)
         {
             return _context.Utilizadors.Any(e => e.IdUtilizador == id);
@@ -439,7 +499,8 @@ namespace CinemaX.Controllers
             return new string(identifier);
         }
 
+        
 
-
+       
     }
 }
