@@ -4,10 +4,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
+                Username
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
@@ -16,11 +13,12 @@
                 @Html.DisplayNameFor(model => model.Telemovel)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DataNascimento)
+                ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)
+                Grupo
             </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -30,10 +28,7 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.UserName)
-                </td>
-                <td >
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
+                </td>               
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
@@ -41,7 +36,7 @@
                     @Html.DisplayFor(modelItem => item.Telemovel)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DataNascimento)
+                    @Html.DisplayFor(modelItem => item.IdUtilizador)
                 </td>
                 <td id="Col_@item.IdUtilizador">
                     @Html.DisplayFor(modelItem => item.IdUtilizadorNavigation.IdGrupoNavigation.NomeGrupo)

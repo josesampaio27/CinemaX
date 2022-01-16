@@ -10,11 +10,12 @@
                 @Html.DisplayNameFor(model => model.Capacidade)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdCreationUser)
+                Adicionado por
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DataAdicionada)
+                Data adicionada
             </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -37,11 +38,11 @@
                 <td>
                     <a asp-action="EditRoom" asp-route-id="@item.Numero" class="btn btn-primary"
                        data-ajax="true" data-ajax-method="get"
-                       data-ajax-mode="replace" data-ajax-update="#Col_@item.Numero">Edit</a>
+                       data-ajax-mode="replace" data-ajax-update="#Col_@item.Numero">Editar</a>
                 </td>
                 <td>
                     <a asp-action="DeleteRoom" asp-route-id="@item.Numero" class="btn btn-danger" style="margin-left:10px;" data-ajax="true" data-ajax-method="get"
-                       data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Delete</a>
+                       data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
                 </td>
             </tr>
         }

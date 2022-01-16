@@ -742,27 +742,6 @@ namespace CinemaX.Controllers
             return View(filme);
         }
 
-        // GET: BackOffice/MovieDetails
-        public async Task<IActionResult> MovieDetails(int? id)
-        {
-            if (!Perm(2))
-                return RedirectToAction(nameof(PermissionDenied));
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var filme = await _context.Filmes
-                .FirstOrDefaultAsync(m => m.IdFilme == id);
-            if (filme == null)
-            {
-                return NotFound();
-            }
-
-            return View(filme);
-        }
-
         // GET: BackOffice/DeleteMovie/5
         public async Task<IActionResult> DeleteMovie(int? id)
         {

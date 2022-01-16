@@ -5,10 +5,12 @@
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>Utilizadores</h1>
+<div class="mydiv">
+    <h1>Utilizadores</h1>
 
-<p>
-    <a asp-action="AddUser" class="btn btn-primary">Adicionar novo utilizador</a>
-</p>
+    <p>
+        <a asp-action="AddUser" class="btn btn-primary">Adicionar novo utilizador</a>
+    </p>
 
-<partial name="UserPartial" model="Model" />
+    <partial name="UserPartial" model="Model" />
+</div>
