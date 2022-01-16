@@ -63,6 +63,10 @@
             <br />
             <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
         </dt>
+        <dt class="col-sm-6">
+            <br />
+            <a asp-action="EditarPerfil" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Editar Perfil</a>
+        </dt>
     </dl>
 
     <label style="font-weight:bold;">Ultimos bilhetes:</label>
@@ -92,10 +96,5 @@
             {
                <label>Ainda não comprou nenhum bilhete!!!</label>
             }
-        <dt class="col-sm-6">
-            <br />
-            <a asp-action="EditarPerfil" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Editar Perfil</a>
-        </dt>
-    </dl>
 </div>
 

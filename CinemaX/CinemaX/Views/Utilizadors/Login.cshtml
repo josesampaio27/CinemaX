@@ -21,6 +21,7 @@
                 <label class="control-label">Password</label>
                 <input asp-for="UserPassWord" class="form-control" />
                 <span asp-validation-for="UserPassWord" class="text-danger"></span>
+                <a asp-action="ForgotPassword" asp-controller="Utilizadors" class="mytext" style="color:black; font-size:small;">Esquecime da password</a>
             </div>
             <div class="form-group">
                 <input type="submit" value="Login" class="btn btn-primary" />

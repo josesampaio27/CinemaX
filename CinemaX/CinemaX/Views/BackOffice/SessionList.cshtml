@@ -1,59 +1,62 @@
 ﻿@model IEnumerable<CinemaX.Models.Sessao>
 
 @{
-    ViewData["Title"] = "SessionList";
+    ViewData["Title"] = "Sessões";
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>SessionList</h1>
+<div class="mydiv">
+    <h1>Sessões</h1>
 
-<p>
-    <a asp-action="AddSession" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Preço)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vagas)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdFilmeNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumeroNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preço)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vagas)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdFilmeNavigation.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroNavigation.Numero)
-            </td>
-            <td>
-                <a asp-action="EditSession" asp-route-id="@item.IdSessao" class="btn btn-primary">Edit</a>               
-                <a asp-action="DeleteSession" asp-route-id="@item.IdSessao" class="btn btn-danger" style="margin-left:10px;">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <p>
+        <a asp-action="AddSession" class="btn btn-primary">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Preço)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vagas)
+                </th>
+                <th>
+                    Filme
+                </th>
+                <th>
+                    Sala
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Preço)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vagas)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdFilmeNavigation.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroNavigation.Numero)
+                    </td>
+                    <td>
+                        <a asp-action="EditSession" asp-route-id="@item.IdSessao" class="btn btn-primary">Editar</a>
+                        <a asp-action="DeleteSession" asp-route-id="@item.IdSessao" class="btn btn-danger" style="margin-left:10px;">Apagar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

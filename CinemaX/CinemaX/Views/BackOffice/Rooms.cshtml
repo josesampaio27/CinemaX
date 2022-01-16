@@ -1,17 +1,19 @@
 ﻿@model IEnumerable<CinemaX.Models.Sala>
 
 @{
-    ViewData["Title"] = "Rooms";
+    ViewData["Title"] = "Salas";
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>Rooms</h1>
+<div class="mydiv">
+    <h1>Salas</h1>
 
-<form asp-action="AddRoom" data-ajax="true"
-      data-ajax-method="post" data-ajax-mode="replace"
-      data-ajax-update="#Tabela" data-ajax-success="sucesso">
-    <input id="inp" type="number" name="number" />
-    <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;" />
-</form>
+    <form asp-action="AddRoom" data-ajax="true"
+          data-ajax-method="post" data-ajax-mode="replace"
+          data-ajax-update="#Tabela" data-ajax-success="sucesso">
+        <input id="inp" type="number" name="number" />
+        <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;" />
+    </form>
 
-<partial name="RoomsPartial" model="Model" />
+    <partial name="RoomsPartial" model="Model" />
+</div>
