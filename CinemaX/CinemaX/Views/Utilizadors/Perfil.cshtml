@@ -5,63 +5,92 @@
     ViewData["Title"] = "Perfil";
 }
 
-<div>
+<div class="mydiv mytext">
     <h4>Perfil</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nome)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.Nome)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.Email)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DataNascimento)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.DataNascimento)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Telemovel)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.Telemovel)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IdUtilizadorNavigation.UserName)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
         </dd>
         @{int CategoriasCount = Model.IdUtilizadorNavigation.CategoriasFavorita.Count; }
         @if (CategoriasCount != 0)
         {
-            <dt class="col-sm-2">
+            <dt style="margin-left:15px;">
                 Categorias Favoritas:
             </dt>
 
-            <dd class="col-sm-10">
+            <dd class="col-sm-10" style="text-indent:110px">
                 @foreach (var Categoria in Model.IdUtilizadorNavigation.CategoriasFavorita)
                 {
                     CategoriasCount--;
                     @Categoria.IdCategoriaNavigation.Nome;
                     if (CategoriasCount != 0)
-                    {<label>,</label> }
+                    {<a>,</a> }
                     else
-                    {<label>.</label>}
+                    {<a>.</a>}
 
                 }
             </dd>
         }
-            <dt class="col-sm-2">
-                <br />
-                <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
-            </dt>
-        </dl>
+        <dt style="margin-left:14px">
+            <br />
+            <a asp-action="EditarCategoriasFavoritas" class="btn btn-primary">Editar Categorias Favoritas</a>
+        </dt>
+    </dl>
+
+    <label>Ultimos bilhetes:</label>
+    <br />
+    @if (ViewBag.Bilhete != null)
+    {
+    <div>
+        @foreach (Bilhete bilhete in ViewBag.Bilhete)
+        {
+        <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top;">
+            <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
+            <br />
+            @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome
+            <br />
+            Sala:@bilhete.IdSessaoNavigation.NumeroNavigation.Numero
+            <br />
+            Data:@bilhete.IdSessaoNavigation.Data
+            <br />
+            <img src="@ViewData[bilhete.NumBilhete.ToString()]" alt="" style="height:150px;width:150px" />
+        </div>
+        }
+    </div>
+    <br />
+    <a asp-action="HistoricoBilhetes" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Historico de bilhetes</a>
+    }
+            else
+            {
+               <label>Ainda não comprou nenhum bilhete!!!</label>
+            }
 </div>
+
