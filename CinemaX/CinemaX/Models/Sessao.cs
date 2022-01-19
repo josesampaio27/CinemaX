@@ -17,7 +17,7 @@ namespace CinemaX.Models
         }
 
         public int IdFilme { get; set; }
-        public int Numero { get; set; }
+        public int IdSala { get; set; }
         [Key]
         public int IdSessao { get; set; }
         [Column("Data_", TypeName = "datetime")]
@@ -32,9 +32,9 @@ namespace CinemaX.Models
         [ForeignKey(nameof(IdFilme))]
         [InverseProperty(nameof(Filme.Sessaos))]
         public virtual Filme IdFilmeNavigation { get; set; }
-        [ForeignKey(nameof(Numero))]
+        [ForeignKey(nameof(IdSala))]
         [InverseProperty(nameof(Sala.Sessaos))]
-        public virtual Sala NumeroNavigation { get; set; }
+        public virtual Sala IdSalaNavigation { get; set; }
         [InverseProperty(nameof(Bilhete.IdSessaoNavigation))]
         public virtual ICollection<Bilhete> Bilhetes { get; set; }
     }

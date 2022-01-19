@@ -40,13 +40,17 @@ namespace CinemaX.Controllers
             _notyf = notyf;
         }
 
+        //GET
+        //Finalização da criação de um utilizadoradicionado por um administrador
         [HttpGet]
         [Route("Utilizadors/AccountActivate/{*code}")]
         public IActionResult AccountActivate(string code)
         {
+            //encontra o utilizador atravez do seu codigo unico
             Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);           
             if (user != null)
             {
+                //inicializa o perfil
                 user.Perfil = _context.Perfils.Find(user.IdUtilizador);
                 user.Perfil.DataNascimento = DateTime.Now;
                 user.Perfil.Nome = null;
@@ -59,10 +63,13 @@ namespace CinemaX.Controllers
 
         }
 
+        //Get
+        //Efetuação da mudança de password
         [HttpGet]
         [Route("Utilizadors/ConfirmChangePassword/{*code}")]
         public IActionResult ConfirmChangePassword(string code)
         {
+            //encontra o utilizador atravez do seu codigo unico
             Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);
             if(user != null)
             {
@@ -72,6 +79,8 @@ namespace CinemaX.Controllers
             return RedirectToAction("ActivationError", "Utilizadors");
         }
 
+        //Post
+        //Efetuação da mudança de password
         [HttpPost]
         public async Task<IActionResult> ConfirmChangePassword(Utilizador utilizador)
         {
@@ -82,14 +91,17 @@ namespace CinemaX.Controllers
 
             if (ModelState.IsValid)
             {
+                //Ativa novamente o utilizador
                 utilizador.ActivationCode = "Activated";
 
+                //criação da hash da password do utilizador
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
                 utilizador.UserPassWord = Hash;
 
                 _context.Update(utilizador);
                 await _context.SaveChangesAsync();
 
+                //notificação
                 _notyf.Success("Password alterada com sucesso");
 
                 return RedirectToAction("Index", "Home");
@@ -98,13 +110,19 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+
+        //Post
+        //Finalização da criação de um utilizadoradicionado por um administrador
         [HttpPost]
         public async Task<IActionResult> AccountActivate([Bind("UserPassWord,IdUtilizador,IdGrupo,UserName")] Utilizador utilizador, [Bind("Nome,DataNascimento,Telemovel,Email")] Perfil perfil)
         {
             
             if (ModelState.IsValid)
             {
+                //Ativa o utilizador
                 utilizador.ActivationCode = "Activated";
+
+                //criação da hash da password do utilizador
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
                 utilizador.UserPassWord = Hash;
 
@@ -116,6 +134,7 @@ namespace CinemaX.Controllers
                 await _context.SaveChangesAsync();             
                 return RedirectToAction("Index","Home");
             }
+
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo", utilizador.IdGrupo);
             return View(utilizador);
         }
@@ -126,14 +145,18 @@ namespace CinemaX.Controllers
             return View();
         }
 
+        //Get
         public IActionResult Login()
         {
+            //Se o utilizador tiver sido redirecionado da ativação de conta ativa um aviso
             if(Request.Headers["Referer"].ToString().Contains("/Utilizadors/Activate"))
                 _notyf.Success("Utilizador confirmado com sucesso");
 
             return View();
         }
 
+        //Get
+        //Todos os bilhetes ja comprados por um utilizador
         public async Task<IActionResult> HistoricoBilhetes(int? id)
         {
             if (id == null)
@@ -146,21 +169,24 @@ namespace CinemaX.Controllers
                 return RedirectToAction("PermissionDenied", "BackOffice");
             }
 
-            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
+            var Perfil = await _context.Perfils.FindAsync(id);
 
+            //se o utilizador contiver bilhetes carrega uma lista com todos os seus bilhetes
             if (_context.Bilhetes.FirstOrDefault(b => b.IdUtilizador == Perfil.IdUtilizador) != null)
             {
                 List<Bilhete> list = new List<Bilhete>();
 
-                foreach (Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b => b.IdSessaoNavigation.NumeroNavigation))
+                foreach (Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b => b.IdSessaoNavigation.IdSalaNavigation))
                 {
                     if (bilhete.IdUtilizador == Perfil.IdUtilizador)
                     {
                         list.Add(bilhete);
+                        //Gera o QrCode do bilhete
                         ViewData[bilhete.NumBilhete.ToString()] = GenerateQRCode("Sessao:" + bilhete.IdSessao + ";NumBilhete:" + bilhete.NumBilhete + ";");
                     }
                 }
 
+                //Troca a ordem da lista
                 list.Reverse();
 
                 ViewBag.Bilhetes = list;
@@ -169,6 +195,8 @@ namespace CinemaX.Controllers
             return View(Perfil);
         }
 
+        //Get
+        //Perfil completo do utilizador
         public async Task<IActionResult> Perfil(int? id)
         {
             if (id == null)
@@ -180,27 +208,27 @@ namespace CinemaX.Controllers
             {
                 return RedirectToAction("PermissionDenied", "BackOffice");
             }
-
-            
-
-            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
-
-            foreach (var cat in _context.CategoriasFavoritas)
-            {
-                if(_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
-                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
-            }
+        
+            var Perfil = await _context.Perfils.Include(u => u.IdUtilizadorNavigation).FirstOrDefaultAsync(m => m.IdUtilizador == id);
 
             if (Perfil == null)
             {
                 return NotFound();
             }
 
+            //Careega as categorias favoritas do utilizador
+            foreach (var cat in _context.CategoriasFavoritas)
+            {
+                if(_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
+                    Perfil.IdUtilizadorNavigation.CategoriasFavorita.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+            }
+
+            //Carrega os ultimos 5 bilhetes do utilizador
             if(_context.Bilhetes.FirstOrDefault(b=> b.IdUtilizador == Perfil.IdUtilizador) != null)
             {
                 List<Bilhete> list = new List<Bilhete>();
 
-                foreach(Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b=>b.IdSessaoNavigation.NumeroNavigation))
+                foreach(Bilhete bilhete in _context.Bilhetes.Include(b => b.IdSessaoNavigation.IdFilmeNavigation).Include(b=>b.IdSessaoNavigation.IdSalaNavigation))
                 {
                     if (bilhete.IdUtilizador == Perfil.IdUtilizador)
                     {
@@ -222,6 +250,7 @@ namespace CinemaX.Controllers
             return View(Perfil);
         }
 
+        //Gerador de codigos qr atravez de string
         public string GenerateQRCode(string QRString)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -235,6 +264,8 @@ namespace CinemaX.Controllers
             }
         }
 
+        //Get
+        //Editar as categorias favoritas do utilizador
         public IActionResult EditarCategoriasFavoritas()
         {
             if (HttpContext.Session.GetInt32("IdUtilizador") == null)
@@ -246,6 +277,12 @@ namespace CinemaX.Controllers
 
             var Perfil = _context.Perfils.Include(p=> p.IdUtilizadorNavigation).FirstOrDefault(m => m.IdUtilizador == id);
 
+            if (Perfil == null)
+            {
+                return NotFound();
+            }
+
+            //Carrega as categorias favoritas do utilizador da base de dados
             foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
             {
                 if (_context.CategoriasFavoritas.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdUtilizador == id) != null)
@@ -255,27 +292,27 @@ namespace CinemaX.Controllers
                 }
             }
 
+            //Carrega todas as categorias da nase de dados
             ViewBag.Categorias = _context.Categoria;
-
-            if (Perfil == null)
-            {
-                return NotFound();
-            }
 
             return View(Perfil);
         }
 
+        //Post
+        //Editar as categorias favoritas do utilizador
         [HttpPost]
         public async Task<IActionResult> EditarCategoriasFavoritas(int[] IdCategorias)
         {
             int id = (int)HttpContext.Session.GetInt32("IdUtilizador");
 
+            //Remove todas as categorias favoritas do utilizador
             foreach (CategoriasFavorita cat in _context.CategoriasFavoritas)
             {
                 if (cat.IdUtilizador == id)
                     _context.Remove(cat);
             }
 
+            //Adiciona as novas categorias favoritas
             foreach (int IdCat in IdCategorias)
             {               
 
@@ -283,10 +320,10 @@ namespace CinemaX.Controllers
                 aux.IdCategoria = IdCat;
                 aux.IdUtilizador = id;
 
-                Categorium cat = _context.Categoria.FirstOrDefault(c => c.IdCategoria == aux.IdCategoria);
+                Categorium cat = _context.Categoria.Find(IdCat);
                 aux.IdCategoriaNavigation = cat;
 
-                Utilizador ut = _context.Utilizadors.FirstOrDefault(u => u.IdUtilizador == aux.IdUtilizador);
+                Utilizador ut = _context.Utilizadors.Find(id);
                 aux.IdUtilizadorNavigation = ut;
              
                 _context.Add(aux);              
@@ -296,30 +333,41 @@ namespace CinemaX.Controllers
             return Redirect("Perfil/"+id.ToString());
         }
 
+        //Get
+        //Efetua o Logout
         public IActionResult Logout()
         {
+            //Apaga todas as cookies de sessão
             HttpContext.Response.Cookies.Delete(".AspNetCore.Session");
 
             return RedirectToAction("Index", "Home");
         }
 
+        //Get
+        //Erro na ativação de um utilizador
         public IActionResult ActivationError()
         {
             return View();
         }
 
+        //Get
+        //Aviso para a ativação de um utilizador
         public IActionResult ActivationWarning()
         {
             return View();
         }
 
+        //Get
+        //Ativação de um utilizador
         [Route("Utilizadors/Activate/{*code}")]
         public async Task<IActionResult> Activate(string code)
         {
+            //encontra o utilizador atravez do seu codigo unico
             Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);
 
             if (user != null)
             {
+                //Ativa o utilizador
                 user.ActivationCode = "Activated";
 
                 _context.Update(user);
@@ -334,23 +382,27 @@ namespace CinemaX.Controllers
         }
 
         // POST: Utilizadors/Register
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //Registo do utilizador
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("UserName,UserPassWord,IdUtilizador,IdGrupo")] Utilizador utilizador, [Bind("Nome,Email,DataNascimento,Telemovel")] Perfil perfil)
         {
+            //Verifica se o username ja existe
             if (_context.Utilizadors.Where(u => u.UserName == utilizador.UserName).Count() != 0)
                 ModelState.AddModelError("UserName", "Nome de utilizador ja existente");
 
+            //Verifica se o email ja existe
             if (_context.Perfils.Where(u => u.Email == perfil.Email).Count() != 0)
                 ModelState.AddModelError("Perfil.Email", "email ja registrado");
 
             if (ModelState.IsValid)
             {
+                //Passa a password do utilizador a hash
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
                 utilizador.UserPassWord = Hash;
                 utilizador.IdGrupo = 1;
+
+                //Gera o codigo unico para ativação
                 utilizador.ActivationCode = GenerateNewCode(25);
 
                 _context.Add(utilizador);
@@ -361,6 +413,8 @@ namespace CinemaX.Controllers
 
                 _context.Add(perfil);
                 await _context.SaveChangesAsync();
+
+                //Envia o email para a ativação do utilizador
                 EnviaEmail(perfil.Email,utilizador.ActivationCode);
                 return RedirectToAction(nameof(ActivationWarning));
             }
@@ -368,6 +422,7 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+        //String para hash
         internal static string GetStringSha256Hash(string text)
         {
             if (String.IsNullOrEmpty(text))
@@ -381,6 +436,8 @@ namespace CinemaX.Controllers
             }
         }
 
+        //Post
+        //Login do utilizador
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login([Bind("UserName,UserPassWord")] Utilizador utilizador)
@@ -390,24 +447,29 @@ namespace CinemaX.Controllers
                 string Hash = GetStringSha256Hash(utilizador.UserPassWord);
                 utilizador.UserPassWord = Hash;
 
+                //Carrega o utilizador com o username e password inseridos
                 Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.UserName == utilizador.UserName && u.UserPassWord == utilizador.UserPassWord);
 
+                //Verifica se o utilizsdor existe
                 if (user == null){
                     ModelState.AddModelError("UserName", "Utilizador ou password erradas!");
                     return View(utilizador);
                 }
 
+                //verifica se o utilizadoe esta ativado
                 if(user.ActivationCode != "Activated")
                 {
                     ModelState.AddModelError("UserName", "Utilizador não confirmado");
                     return View(utilizador);
                 }
 
+                //cria as cookies de sessão
                 HttpContext.Session.SetInt32("IdUtilizador", user.IdUtilizador);
                 HttpContext.Session.SetString("NomeUtilizador", user.UserName);
 
                 string permissoes = null;
                 
+                //carrega as permissões para uma string
                 foreach (var lista in _context.ListaPermissoes)
                 {
                     if (lista.IdGrupo == user.IdGrupo)
@@ -416,6 +478,7 @@ namespace CinemaX.Controllers
                     }
                 }
 
+                //cria uma cookie com as permissões do utilizador
                 if(permissoes != null)
                 HttpContext.Session.SetString("Permissoes", permissoes);
 
@@ -425,6 +488,8 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+        //Get
+        //Editar perfil do utilizador
         [HttpGet]
         public IActionResult EditarPerfil(int? id)
         {
@@ -432,12 +497,19 @@ namespace CinemaX.Controllers
             if (id == null)
             {
                 return NotFound();
-            }            
+            }
+
+            if (id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
 
             Perfil perfil = _context.Perfils.Include(p=>p.IdUtilizadorNavigation).FirstOrDefault(p => p.IdUtilizador == id);
             return View(perfil);
         }
 
+        //Post
+        //Editar perfil do utilizador
         [HttpPost]
         public async Task<IActionResult> EditarPerfil(int id, Perfil perfil)
         {
@@ -446,8 +518,14 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
+            if (id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
+            }
+
             Utilizador utilizador = _context.Utilizadors.Find(id);
 
+            //Verifica se o nome de utilizador não esta em utilização
             if (perfil.IdUtilizadorNavigation.UserName != utilizador.UserName && _context.Utilizadors.FirstOrDefault(u=> u.UserName == perfil.IdUtilizadorNavigation.UserName) != null)
             {
                 ModelState.AddModelError("IdUtilizadorNavigation.UserName", "Já existe um utilizador com esse UserName");
@@ -478,6 +556,7 @@ namespace CinemaX.Controllers
                     }
                 }
 
+                //Atualiza a cookie com o nome de utilizador
                 HttpContext.Session.SetString("NomeUtilizador", utilizador.UserName);
 
                 return Redirect("/utilizadors/perfil/" + id.ToString());            
@@ -485,11 +564,17 @@ namespace CinemaX.Controllers
             return View(perfil);
         }
 
+
+        //Get
+        //Repor password esquecida
         public IActionResult ForgotPassword()
         {
             return View();
         }
 
+
+        //Post
+        //Repor password esquecida
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
@@ -499,24 +584,34 @@ namespace CinemaX.Controllers
             {                        
                 Utilizador utilizador = await _context.Utilizadors.FindAsync(perfil.IdUtilizador);
 
+                //Gera codigo para mudar a password
                 utilizador.ActivationCode = GenerateNewCode(25);
 
                 _context.Update(utilizador);
                 await _context.SaveChangesAsync();
 
+                //Envia email com o codigo
                 EnviaEmailPassword(perfil.Email, utilizador.ActivationCode);              
             }
 
+            //notificação
             _notyf.Success("email enviado!");
 
             return RedirectToAction("Index", "Home");
         }
 
+        //Get
+        //Mudar a password
         public async Task<IActionResult> ChangePassword(int? id)
         {
             if(id == null)
             {
                 return NotFound();
+            }
+
+            if (id != HttpContext.Session.GetInt32("IdUtilizador"))
+            {
+                return RedirectToAction("PermissionDenied", "BackOffice");
             }
 
             Utilizador utilizador = await _context.Utilizadors.FindAsync(id);
@@ -526,15 +621,19 @@ namespace CinemaX.Controllers
                 return NotFound();
             }
 
+            //Gera codigo para mudar a password
             utilizador.ActivationCode = GenerateNewCode(25);
 
             _context.Update(utilizador);
             await _context.SaveChangesAsync();
 
+            //Envia email com o codigo
             EnviaEmailPassword(_context.Perfils.Find(id).Email, utilizador.ActivationCode);
 
+            //Termina a sessão
             HttpContext.Response.Cookies.Delete(".AspNetCore.Session");
 
+            //notificação
             _notyf.Success("email enviado!");
 
             return RedirectToAction("Index", "Home");
@@ -551,7 +650,7 @@ namespace CinemaX.Controllers
             return _context.Utilizadors.Any(e => e.IdUtilizador == id);
         }
 
-
+        //Envia email
         public void EnviaEmailPassword(string email, string code)
         {
           
@@ -566,7 +665,7 @@ namespace CinemaX.Controllers
             TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();
         }
 
-
+        //Envia email
         public void EnviaEmail(string email, string code)
         {            
 
@@ -581,6 +680,7 @@ namespace CinemaX.Controllers
             TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();                                    
         }
         
+        //Envia email
         public async Task TesteEnvioEmail(string email, string assunto, string mensagem)
         {
             try
@@ -594,6 +694,7 @@ namespace CinemaX.Controllers
             }
         }
 
+        //Gerador de codigos unicos
         public static string GenerateNewCode(int length)
         {
             char[] identifier = new char[length];

@@ -17,6 +17,8 @@ namespace CinemaX.Models
         }
 
         [Key]
+        public int IdSala { get; set; }
+        [Required]
         public int Numero { get; set; }
         [Required]
         public int Capacidade { get; set; }
@@ -25,7 +27,7 @@ namespace CinemaX.Models
         [DataType(DataType.Date)]
         public DateTime DataAdicionada { get; set; }
 
-        [InverseProperty(nameof(Sessao.NumeroNavigation))]
+        [InverseProperty(nameof(Sessao.IdSalaNavigation))]
         public virtual ICollection<Sessao> Sessaos { get; set; }
     }
 }

@@ -47,7 +47,7 @@
                        data-ajax-mode="replace" data-ajax-update="#Col_@item.IdUtilizador">Editar</a>                
                 </td>
                 <td>
-                    <a asp-action="DeleteUser" asp-route-id="@item.IdUtilizador" class="btn btn-danger" data-ajax="true" data-ajax-method="get"
+                    <a asp-action="DeleteUser" asp-route-id="@item.IdUtilizador" class="btn btn-danger" data-ajax="true" data-ajax-method="post"
                        data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
                 </td>
             </tr>
