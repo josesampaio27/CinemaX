@@ -20,7 +20,7 @@
             @Html.DisplayNameFor(model => model.Preço)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Preço)
+            @Html.DisplayFor(model => model.Preço)€
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Vagas)
@@ -39,6 +39,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IdSalaNavigation.Numero)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Vagas)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Vagas)
         </dd>
     </dl>
     <form asp-action="Comprar" asp-route-id="@Model.IdSessao">

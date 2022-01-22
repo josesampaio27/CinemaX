@@ -40,11 +40,18 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> Comprar(int id, int numero)
         {
+            Sessao sessao = _context.Sessaos.Find(id);
+            int vagas = sessao.Vagas;
+
+            if(numero > vagas)
+            {
+                _notyf.Error("Não exite vagas sufecientes para a quantidade de bilhetes");
+                return Redirect("/Home/ComprarBilhete/"+id.ToString());
+            }
+
             //ciclo para comprar o numero de bilhetes escolhidos pelo utilizador
             for (int i = numero; i > 0; i--)
             {
-                Sessao sessao = _context.Sessaos.Find(id);
-
                 Bilhete bilhete = new Bilhete();
                 Utilizador utilizador = _context.Utilizadors.Find(HttpContext.Session.GetInt32("IdUtilizador"));
 
@@ -55,6 +62,8 @@ namespace CinemaX.Controllers
 
 
                 _context.Add(bilhete);
+                sessao.Vagas = sessao.Vagas - 1;
+                _context.Update(sessao);
                 await _context.SaveChangesAsync();
 
                 sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
@@ -86,7 +95,7 @@ namespace CinemaX.Controllers
             if(sessao == null)
             {
                 return NotFound();
-            }
+            }           
 
             sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
             sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
@@ -379,7 +388,7 @@ namespace CinemaX.Controllers
 
             string Destino, Assunto, Mensagem;
             Destino = email;
-            Assunto = "CinemaX - bilhete pata" + session.IdFilmeNavigation.Nome;
+            Assunto = "CinemaX - bilhete para " + session.IdFilmeNavigation.Nome;
             Mensagem = "<h1>Bilhete:</h1>" +
                 "Filme: " + session.IdFilmeNavigation.Nome + "<br/>" +
                 "Sala: " + session.IdSalaNavigation.Numero + "<br/>" +

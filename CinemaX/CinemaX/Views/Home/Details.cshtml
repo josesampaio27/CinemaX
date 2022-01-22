@@ -57,18 +57,26 @@
             }
         </dd>
     </dl>
-
+    @{int hassession = 0; }
     <h4>Sessões:</h4>
     @if (Model.Sessaos.Count == 0)
     {
-                <label>Não existem sessões para este filme.</label>
+        <label>Não existem sessões para este filme.</label>
     }
     else
     {
-    @foreach (Sessao sessao in Model.Sessaos)
-    {
-        <a asp-action="ComprarBilhete" asp-route-id="@sessao.IdSessao" class="btn btn-primary" style="margin-left:5px;">@sessao.Data</a>
+        @foreach (Sessao sessao in Model.Sessaos)
+        {
+            if (sessao.Data > DateTime.Now && sessao.Vagas>0)
+            {
+                <a asp-action="ComprarBilhete" asp-route-id="@sessao.IdSessao" class="btn btn-primary" style="margin-left:5px;">@sessao.Data</a>
+                hassession++;
+            }
+        }
     }
+    @if (hassession == 0)
+    {
+        <label>Não existem sessões para este filme.</label>
     }
 
 

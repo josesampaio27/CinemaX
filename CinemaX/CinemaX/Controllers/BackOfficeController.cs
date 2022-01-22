@@ -204,7 +204,7 @@ namespace CinemaX.Controllers
                 return RedirectToAction(nameof(PermissionDenied));
 
             //Se algum utilizador pertencer a este grupo notifica que é impossivel apagar
-            if (_context.GrupoPermissoes.FirstOrDefault(l => l.IdGrupo == Id) != null)
+            if (_context.Utilizadors.FirstOrDefault(l => l.IdGrupo == Id) != null)
             {
                 _notyf.Error("Impossivel eliminar enquanto o grupo contiver Utilizadores");
             }
@@ -418,7 +418,11 @@ namespace CinemaX.Controllers
             if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
-            return View(await _context.Sessaos.Include(f => f.IdFilmeNavigation).Include(f=> f.IdSalaNavigation).ToListAsync());
+            foreach (Sessao sessao in _context.Sessaos) {
+                ViewData[sessao.IdSessao.ToString()] = _context.Bilhetes.Where(b => b.IdSessao == sessao.IdSessao).Count().ToString();
+            }
+
+            return View(await _context.Sessaos.Include(f => f.IdFilmeNavigation).Include(f=> f.IdSalaNavigation).OrderByDescending(x=>x.Data).ToListAsync());
         }
 
         // GET: BackOffice/AddSession
@@ -439,6 +443,11 @@ namespace CinemaX.Controllers
         {
             if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
+
+            if (sessao.Data < DateTime.Now)
+            {
+                ModelState.AddModelError("Data", "Data invalida");
+            }
 
             if (ModelState.IsValid)
             {
@@ -479,12 +488,18 @@ namespace CinemaX.Controllers
             if (id == null)
             {
                 return NotFound();
+            }           
+
+            if (_context.Bilhetes.FirstOrDefault(b => b.IdSessao == id) != null)
+            {
+                _notyf.Error("Impossivel editar uma sessão com bilhetes ja vendidos");
+                return RedirectToAction("SessionList");
             }
 
             var sessao = _context.Sessaos.FirstOrDefault(s => s.IdSessao == id);
 
             ViewData["IdFilme"] = new SelectList(_context.Filmes, "IdFilme", "Nome");
-            ViewData["Numero"] = new SelectList(_context.Salas, "Numero", "Numero");
+            ViewData["Numero"] = new SelectList(_context.Salas, "IdSala", "Numero");
 
             sessao.Preço_string = sessao.Preço.ToString().Replace(",",".");
             sessao.Preço_string = sessao.Preço_string.Remove(sessao.Preço_string.Length - 2, 2);
@@ -494,7 +509,7 @@ namespace CinemaX.Controllers
 
         //POST: BackOffice/EditSession
         [HttpPost]
-        public async Task<IActionResult> EditSession(int id, [Bind("IdSessao,IdFilme,Numero,Data,Preço_string")] Sessao sessao)
+        public async Task<IActionResult> EditSession(int id, [Bind("IdSessao,IdFilme,IdSala,Data,Preço_string")] Sessao sessao)
         {
             if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
@@ -535,21 +550,21 @@ namespace CinemaX.Controllers
         }
 
         // GET: BackOffice/DeleteSession
-        public IActionResult DeleteSession(int? id)
-        {
-            if (!Perm(5))
-                return RedirectToAction(nameof(PermissionDenied));
+        //public IActionResult DeleteSession(int? id)
+        //{
+        //    if (!Perm(5))
+        //        return RedirectToAction(nameof(PermissionDenied));
 
-            if(id == null)
-                return NotFound();
+        //    if(id == null)
+        //        return NotFound();
 
-            var sessao = _context.Sessaos.Find(id);
+        //    var sessao = _context.Sessaos.Find(id);
 
-            sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
-            sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
+        //    sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
+        //    sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
 
-            return View(sessao);
-        }
+        //    return View(sessao);
+        //}
 
         // POST: BackOffice/DeleteSession 
         [HttpPost, ActionName("DeleteSession")]
@@ -559,10 +574,25 @@ namespace CinemaX.Controllers
                 return RedirectToAction(nameof(PermissionDenied));
 
             var sessao = await _context.Sessaos.FindAsync(id);
+
+            foreach (Sessao sessaos in _context.Sessaos)
+            {
+                ViewData[sessaos.IdSessao.ToString()] = _context.Bilhetes.Where(b => b.IdSessao == sessaos.IdSessao).Count().ToString();
+            }
+
+            if (_context.Bilhetes.FirstOrDefault(b=>b.IdSessao == sessao.IdSessao) != null)
+            {
+                _notyf.Error("Impossivel eliminar sessão com bilhetes vendidos");
+
+                return PartialView("SessionListPartial", await _context.Sessaos.Include(f => f.IdFilmeNavigation).Include(f => f.IdSalaNavigation).OrderByDescending(x => x.Data).ToListAsync());
+            }
+
             _context.Sessaos.Remove(sessao);
             await _context.SaveChangesAsync();
+
             _notyf.Success("Sessao elimiada com sucesso");
-            return RedirectToAction(nameof(SessionList));
+
+            return PartialView("SessionListPartial", await _context.Sessaos.Include(f => f.IdFilmeNavigation).Include(f => f.IdSalaNavigation).OrderByDescending(x => x.Data).ToListAsync());
         }
 
        

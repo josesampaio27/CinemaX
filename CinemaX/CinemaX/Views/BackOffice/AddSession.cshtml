@@ -1,47 +1,46 @@
 ﻿@model CinemaX.Models.Sessao
 
 @{
-    ViewData["Title"] = "AddSession";
+    ViewData["Title"] = "Adiconar sessão";
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>AddSession</h1>
-
-<h4>Sessao</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="AddSession">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="IdFilme" class="control-label"></label>
-                <select asp-for="IdFilme" class="form-control" asp-items="ViewBag.IdFilme"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdSala" class="control-label"></label>
-                <select asp-for="IdSala" class="form-control" asp-items="ViewBag.Numero"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Preço" class="control-label"></label>
-                <input asp-for="Preço_string" class="form-control" />
-                <span asp-validation-for="Preço_string" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="mydiv">
+    <h4>Adicionar sessão</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="AddSession">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Filme</label>
+                    <select asp-for="IdFilme" class="form-control" asp-items="ViewBag.IdFilme"></select>
+                </div>
+                <div class="form-group">
+                    <label >Sala</label>
+                    <select asp-for="IdSala" class="form-control" asp-items="ViewBag.Numero"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Data" class="control-label"></label>
+                    <input asp-for="Data" class="form-control" />
+                    <span asp-validation-for="Data" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Preço" class="control-label"></label>
+                    <input asp-for="Preço_string" class="form-control"/>
+                    <span asp-validation-for="Preço_string" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+    <div>
+        <a asp-action="SessionList" style="color:black;">Voltar</a>
+    </div>
 
-<div>
-    <a asp-action="SessionList">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
