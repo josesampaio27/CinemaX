@@ -4,44 +4,44 @@
     ViewData["Title"] = "Registo";
 }
 
-<h1>Registo</h1>
+<h1>Inscrever</h1>
 <hr />
 <div class="row mydiv mytext-Bold">
     <div class="col-md-4">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label class="control-label">Username</label>
+                <label class="control-label">Nome de Utilizador</label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Password</label>
+                <label class="control-label">Palavra-Passe</label>
                 <input asp-for="UserPassWord" class="form-control" />
                 <span asp-validation-for="UserPassWord" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Nome completo</label>
+                <label class="control-label">Nome Completo</label>
                 <input asp-for="Perfil.Nome" class="form-control" />
                 <span asp-validation-for="Perfil.Nome" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Perfil.Email" class="control-label"></label>
+                <label asp-for="Perfil.Email" class="control-label">E-mail</label>
                 <input asp-for="Perfil.Email" class="form-control" />
                 <span asp-validation-for="Perfil.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Data de nascimento</label>
+                <label class="control-label">Data de Nascimento</label>
                 <input asp-for="Perfil.DataNascimento" class="form-control" />
                 <span asp-validation-for="Perfil.DataNascimento" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Numero de telemovel</label>
+                <label class="control-label">Número de telemóvel</label>
                 <input asp-for="Perfil.Telemovel" class="form-control" />
                 <span asp-validation-for="Perfil.Telemovel" class="text-danger"></span>
             </div>           
             <div class="form-group">
-                <input type="submit" value="Registar" class="btn btn-primary" />
+                <input type="submit" value="Inscrever" class="btn btn-primary" />
             </div>
         </form>
     </div>
