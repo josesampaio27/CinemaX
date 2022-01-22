@@ -5,17 +5,18 @@
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>Grupos de permissoes</h1>
+<div class="mydiv">
+    <h1>Grupos de permissoes</h1>
 
-<form asp-action="AddGroup" data-ajax="true"
-      data-ajax-method="post" data-ajax-mode="replace"
-      data-ajax-update="#Tabela" data-ajax-success="sucesso">
-    <input id="inp" type="text" name="NewName" />
-    <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;"/>
-</form>
+    <form asp-action="AddGroup" data-ajax="true"
+          data-ajax-method="post" data-ajax-mode="replace"
+          data-ajax-update="#Tabela" data-ajax-success="sucesso">
+        <input id="inp" type="text" name="NewName" />
+        <input type="submit" value="Adicionar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;" />
+    </form>
 
-<partial name="PermissoesPartial" model="Model" />
-
+    <partial name="PermissoesPartial" model="Model" />
+</div>
 
 
 @section Scripts{    

@@ -59,6 +59,45 @@ namespace CinemaX.Controllers
 
         }
 
+        [HttpGet]
+        [Route("Utilizadors/ConfirmChangePassword/{*code}")]
+        public IActionResult ConfirmChangePassword(string code)
+        {
+            Utilizador user = _context.Utilizadors.FirstOrDefault(u => u.ActivationCode == code);
+            if(user != null)
+            {
+                return View(user);
+            }
+
+            return RedirectToAction("ActivationError", "Utilizadors");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmChangePassword(Utilizador utilizador)
+        {
+            if(utilizador == null)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                utilizador.ActivationCode = "Activated";
+
+                string Hash = GetStringSha256Hash(utilizador.UserPassWord);
+                utilizador.UserPassWord = Hash;
+
+                _context.Update(utilizador);
+                await _context.SaveChangesAsync();
+
+                _notyf.Success("Password alterada com sucesso");
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(utilizador);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AccountActivate([Bind("UserPassWord,IdUtilizador,IdGrupo,UserName")] Utilizador utilizador, [Bind("Nome,DataNascimento,Telemovel,Email")] Perfil perfil)
         {
@@ -386,15 +425,150 @@ namespace CinemaX.Controllers
             return View(utilizador);
         }
 
+        [HttpGet]
+        public IActionResult EditarPerfil(int? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }            
+
+            Perfil perfil = _context.Perfils.Include(p=>p.IdUtilizadorNavigation).FirstOrDefault(p => p.IdUtilizador == id);
+            return View(perfil);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarPerfil(int id, Perfil perfil)
+        {
+            if (id != perfil.IdUtilizador)
+            {
+                return NotFound();
+            }
+
+            Utilizador utilizador = _context.Utilizadors.Find(id);
+
+            if (perfil.IdUtilizadorNavigation.UserName != utilizador.UserName && _context.Utilizadors.FirstOrDefault(u=> u.UserName == perfil.IdUtilizadorNavigation.UserName) != null)
+            {
+                ModelState.AddModelError("IdUtilizadorNavigation.UserName", "Já existe um utilizador com esse UserName");
+            }
+
+            ModelState.Remove("IdUtilizadorNavigation.UserPassWord");
+
+            if (ModelState.IsValid)
+            {              
+                utilizador.UserName = perfil.IdUtilizadorNavigation.UserName;
+                perfil.IdUtilizadorNavigation = utilizador;
+
+                try
+                {
+                    _context.Update(utilizador);
+                    _context.Update(perfil);                 
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PerfilExists(perfil.IdUtilizador))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                HttpContext.Session.SetString("NomeUtilizador", utilizador.UserName);
+
+                return Redirect("/utilizadors/perfil/" + id.ToString());            
+            }
+            return View(perfil);
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            Perfil perfil = _context.Perfils.FirstOrDefault(p => p.Email == email);
+
+            if(perfil != null)
+            {                        
+                Utilizador utilizador = await _context.Utilizadors.FindAsync(perfil.IdUtilizador);
+
+                utilizador.ActivationCode = GenerateNewCode(25);
+
+                _context.Update(utilizador);
+                await _context.SaveChangesAsync();
+
+                EnviaEmailPassword(perfil.Email, utilizador.ActivationCode);              
+            }
+
+            _notyf.Success("email enviado!");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> ChangePassword(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            Utilizador utilizador = await _context.Utilizadors.FindAsync(id);
+
+            if(utilizador == null)
+            {
+                return NotFound();
+            }
+
+            utilizador.ActivationCode = GenerateNewCode(25);
+
+            _context.Update(utilizador);
+            await _context.SaveChangesAsync();
+
+            EnviaEmailPassword(_context.Perfils.Find(id).Email, utilizador.ActivationCode);
+
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Session");
+
+            _notyf.Success("email enviado!");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        private bool PerfilExists(int id)
+        {
+            return _context.Perfils.Any(e => e.IdUtilizador == id);
+        }
+
+
         private bool UtilizadorExists(int id)
         {
             return _context.Utilizadors.Any(e => e.IdUtilizador == id);
         }
 
-        public void EnviaEmail(string email, string code)
-        {
-            int? id = HttpContext.Session.GetInt32("IdUtilizador");
 
+        public void EnviaEmailPassword(string email, string code)
+        {
+          
+            string Destino, Assunto, Mensagem;
+
+            string Url = "https://localhost:44341/Utilizadors/ConfirmChangePassword/" + code;
+
+            Destino = email;
+            Assunto = "CinemaX - Alterar password";
+            Mensagem = "<h1>Pedido de alteração de password</h1> <br/>Foi feito um pedido de alteração de password, altere a password para continuar a usufruir do website" +
+            "<br/><a href=\"" + Url + "\">Clique aqui para alterar a password</a>";
+            TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();
+        }
+
+
+        public void EnviaEmail(string email, string code)
+        {            
 
             string Destino, Assunto, Mensagem;
 
@@ -439,7 +613,8 @@ namespace CinemaX.Controllers
             return new string(identifier);
         }
 
+        
 
-
+       
     }
 }

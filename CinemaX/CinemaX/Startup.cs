@@ -79,6 +79,11 @@ namespace CinemaX
                 endpoints.MapControllerRoute(
                    name: "filtered",
                    pattern: "Filter/{*code}",
+                   defaults: new { Controller = "Utilizadors", Action = "ConfirmChangePassword" });
+
+                endpoints.MapControllerRoute(
+                   name: "filtered",
+                   pattern: "Filter/{*code}",
                    defaults: new { Controller = "Utilizadors", Action = "ActivateRegister" });
 
 

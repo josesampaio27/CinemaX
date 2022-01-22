@@ -43,6 +43,9 @@ namespace CinemaX.Controllers
         //Post
         public IActionResult AddCategory(string NewName)
         {
+            if (!Perm(7))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (NewName == null)
             {
                 _notyf.Error("Não é possivel adicionar uma categoria sem nome");
@@ -60,6 +63,9 @@ namespace CinemaX.Controllers
         //GET
         public IActionResult EditCategory(int Id)
         {
+            if (!Perm(7))
+                return RedirectToAction(nameof(PermissionDenied));
+
             Categorium c = _context.Categoria.Find(Id);        
             return PartialView("EditCategory", c);
         }
@@ -68,6 +74,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public string EditCategory(int id, Categorium c)
         {
+            if (!Perm(1))
+                return null;
+
             _context.Update(c);
             _context.SaveChanges();
             return c.Nome;
@@ -76,6 +85,9 @@ namespace CinemaX.Controllers
         //Post
         public async Task<IActionResult> DeleteCategory(int Id)
         {
+            if (!Perm(7))
+                return RedirectToAction(nameof(PermissionDenied));
+
             Categorium c = _context.Categoria.Find(Id);      
             
             foreach(CategoriasFilme film in _context.CategoriasFilmes)
@@ -102,6 +114,9 @@ namespace CinemaX.Controllers
         //Get
         public async Task<IActionResult> CategoryList()
         {
+            if (!Perm(7))
+                return RedirectToAction(nameof(PermissionDenied));
+
             var cinemaXContext = _context.Categoria;
 
             return View(await cinemaXContext.ToListAsync());
@@ -110,6 +125,9 @@ namespace CinemaX.Controllers
         //Post
         public IActionResult AddGroup(string NewName)
         {
+            if (!Perm(8))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (NewName == null)
             {
                 _notyf.Error("Não é possivel adicionar um Grupo sem nome");
@@ -131,6 +149,9 @@ namespace CinemaX.Controllers
         //Post
         public async Task<IActionResult> DeleteUser(int Id)
         {
+            if (!Perm(3))
+                return RedirectToAction(nameof(PermissionDenied));
+
             Perfil P = _context.Perfils.Find(Id);
             Utilizador U = _context.Utilizadors.Find(Id);
             _context.Perfils.Remove(P);
@@ -143,6 +164,9 @@ namespace CinemaX.Controllers
         //Post
         public async Task<IActionResult> DeleteGroup(int Id)
         {
+            if (!Perm(8))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (_context.GrupoPermissoes.FirstOrDefault(l => l.IdGrupo == Id) != null)
             {
                 _notyf.Error("Impossivel eliminar enquanto o grupo contiver Utilizadores");
@@ -168,6 +192,9 @@ namespace CinemaX.Controllers
             //Get
             public async Task<IActionResult> Permissoes()
         {
+            if (!Perm(8))
+                return RedirectToAction(nameof(PermissionDenied));
+
             ViewBag.Permissoes = _context.Permissoes;
             ViewBag.ListaPerm = _context.ListaPermissoes;
 
@@ -180,6 +207,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveGroups(int id, int []perms)
         {
+            if (!Perm(8))
+                return RedirectToAction(nameof(PermissionDenied));
+
             GrupoPermisso grupo = _context.GrupoPermissoes.Find(id);
 
             foreach(ListaPermisso perm in _context.ListaPermissoes)
@@ -206,12 +236,18 @@ namespace CinemaX.Controllers
         // GET: Utilizadors
         public async Task<IActionResult> UserList()
         {
+            if (!Perm(3))
+                return RedirectToAction(nameof(PermissionDenied));
+
             var cinemaXContext = _context.Perfils.Include(u => u.IdUtilizadorNavigation.IdGrupoNavigation);
             return View(await cinemaXContext.ToListAsync());
         }
 
         public IActionResult AddUser()
         {
+            if (!Perm(3))
+                return RedirectToAction(nameof(PermissionDenied));
+
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo");
             return View();
         }
@@ -219,6 +255,9 @@ namespace CinemaX.Controllers
         //Get
         public IActionResult EditUser(int Id)
         {
+            if (!Perm(3))
+                return RedirectToAction(nameof(PermissionDenied));
+
             Utilizador a = _context.Utilizadors.Include(x=> x.IdGrupoNavigation).SingleOrDefault(x => x.IdUtilizador == Id);
             ViewData["IdGrupo"] = new SelectList(_context.GrupoPermissoes, "IdGrupo", "NomeGrupo");
             return PartialView("EditUserRole", a);
@@ -227,6 +266,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public string EditUser(int id, Utilizador p)
         {
+            if (!Perm(3))
+                return null;
+
             _context.Update(p);
             _context.SaveChanges();
             p.IdGrupoNavigation = _context.GrupoPermissoes.FirstOrDefault(g => g.IdGrupo == p.IdGrupo);
@@ -236,6 +278,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser([Bind("UserName,IdGrupo")] Utilizador utilizador, [Bind("Email")] Perfil perfil)
         {
+            if (!Perm(3))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (_context.Utilizadors.Where(u => u.UserName == utilizador.UserName).Count() != 0)
                 ModelState.AddModelError("UserName", "Nome de utilizador ja existente");
 
@@ -267,7 +312,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/FilmList
         public async Task<IActionResult> FilmList()
         {
-            if (!Perm(1))
+            if (!Perm(2))
                 return RedirectToAction(nameof(PermissionDenied));
             return View(await _context.Filmes.ToListAsync());
         }
@@ -275,7 +320,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/Rooms
         public async Task<IActionResult> Rooms()
         {
-            if (!Perm(1))
+            if (!Perm(4))
                 return RedirectToAction(nameof(PermissionDenied));
             return View(await _context.Salas.ToListAsync());
         }
@@ -283,7 +328,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/AddMovie
         public IActionResult AddMovie()
         {
-            if(!Perm(1))
+            if(!Perm(2))
                 return RedirectToAction(nameof(PermissionDenied));
             ViewBag.Categorias = _context.Categoria;
             return View();  
@@ -297,7 +342,7 @@ namespace CinemaX.Controllers
 
         public async Task<IActionResult> SessionList()
         {
-            if (!Perm(1))
+            if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
             return View(await _context.Sessaos.Include(f => f.IdFilmeNavigation).Include(f=> f.NumeroNavigation).ToListAsync());
@@ -306,7 +351,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/AddSession
         public IActionResult AddSession()
         {
-            if (!Perm(1))
+            if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
 
@@ -319,7 +364,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> AddSession([Bind("IdFilme,Numero,Data,Preço_string")] Sessao sessao)
         {
-            
+            if (!Perm(5))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (ModelState.IsValid)
             {
                 sessao.Preço = decimal.Parse(sessao.Preço_string, CultureInfo.InvariantCulture);
@@ -353,7 +400,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/EditSession
         public IActionResult EditSession(int? id)
         {
-            if (!Perm(1))
+            if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if (id == null)
@@ -376,7 +423,7 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> EditSession(int id, [Bind("IdSessao,IdFilme,Numero,Data,Preço_string")] Sessao sessao)
         {
-            if (!Perm(1))
+            if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if (id != sessao.IdSessao)
@@ -417,7 +464,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/DeleteSession
         public IActionResult DeleteSession(int? id)
         {
-            if (!Perm(1))
+            if (!Perm(5))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if(id == null)
@@ -435,6 +482,9 @@ namespace CinemaX.Controllers
         [HttpPost, ActionName("DeleteSession")]
         public async Task<IActionResult> DeleteSessionConfirmed(int id)
         {
+            if (!Perm(5))
+                return RedirectToAction(nameof(PermissionDenied));
+
             var sessao = await _context.Sessaos.FindAsync(id);
             _context.Sessaos.Remove(sessao);
             await _context.SaveChangesAsync();
@@ -447,6 +497,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRoom(int? number)
         {
+            if (!Perm(4))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (number == null)
             {
                 _notyf.Error("Não é possivel adicionar uma sala sem capacidade");
@@ -465,6 +518,9 @@ namespace CinemaX.Controllers
         // GET: BackOffice/EditRoom/?
         public IActionResult EditRoom(int? id)
         {
+            if (!Perm(4))
+                return RedirectToAction(nameof(PermissionDenied));
+
             Sala sala = _context.Salas.Find(id);
             return PartialView("EditRoom", sala);
         }
@@ -473,6 +529,9 @@ namespace CinemaX.Controllers
         [HttpPost]
         public async Task<int> EditRoom(int id, Sala sala)
         {
+            if (!Perm(4))
+                return -1;
+
             _context.Update(sala);
             await _context.SaveChangesAsync();
 
@@ -482,7 +541,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/DeleteRoom/?
         public async Task<IActionResult> DeleteRoom(int? id)
         {
-            if (!Perm(1))
+            if (!Perm(4))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if (id == null)
@@ -514,6 +573,9 @@ namespace CinemaX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddMovie([Bind("Nome,Foto,Realizador,Data,LinkTrailer,Descrição,Duracao,DataAdicionado")] Filme filme, IFormFile Foto,int []IdCategorias)
         {
+            if (!Perm(2))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (Foto == null)
                 ModelState.AddModelError("Foto", "É obrigatorio introduzir uma foto");
 
@@ -549,6 +611,9 @@ namespace CinemaX.Controllers
                 _context.Add(filme);
                 await _context.SaveChangesAsync();
                 _notyf.Success("filme adicionado com sucesso");
+
+                EmailFavorites(filme.IdFilme);
+
                 return RedirectToAction(nameof(FilmList));
             }
 
@@ -559,7 +624,7 @@ namespace CinemaX.Controllers
         // GET: BackOffice/EditMovie/?
         public IActionResult EditMovie(int? id)
         {
-            if (!Perm(1))
+            if (!Perm(2))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if (id == null)
@@ -593,6 +658,9 @@ namespace CinemaX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditMovie(int id, [Bind("IdFilme,Nome,Foto,Realizador,Data,LinkTrailer,Descrição,Duracao,IdCreationUser,DataAdicionado")] Filme filme ,IFormFile Foto, int[] IdCategorias)
         {
+            if (!Perm(2))
+                return RedirectToAction(nameof(PermissionDenied));
+
             if (id != filme.IdFilme)
             {
                 return NotFound();
@@ -674,31 +742,10 @@ namespace CinemaX.Controllers
             return View(filme);
         }
 
-        // GET: BackOffice/MovieDetails
-        public async Task<IActionResult> MovieDetails(int? id)
-        {
-            if (!Perm(1))
-                return RedirectToAction(nameof(PermissionDenied));
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var filme = await _context.Filmes
-                .FirstOrDefaultAsync(m => m.IdFilme == id);
-            if (filme == null)
-            {
-                return NotFound();
-            }
-
-            return View(filme);
-        }
-
         // GET: BackOffice/DeleteMovie/5
         public async Task<IActionResult> DeleteMovie(int? id)
         {
-            if (!Perm(1))
+            if (!Perm(2))
                 return RedirectToAction(nameof(PermissionDenied));
 
             if (id == null)
@@ -727,6 +774,9 @@ namespace CinemaX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!Perm(2))
+                return RedirectToAction(nameof(PermissionDenied));
+
             foreach (CategoriasFilme catf in _context.CategoriasFilmes)
             {
                 if (catf.IdFilme == id)
@@ -795,6 +845,21 @@ namespace CinemaX.Controllers
         }
 
         //Funciton
+        public void EnviaEmailCategoria(string email,string nomefilme)
+        {
+            int? id = HttpContext.Session.GetInt32("IdUtilizador");
+
+
+            string Destino, Assunto, Mensagem;            
+
+            Destino = email;
+            Assunto = "Foi adicionado um filme com uma categoria que esta na sua lista de favoritos";
+            Mensagem = "<h1>Foi adicionado um filme com uma categoria que esta na sua lista de favoritos</h1> <br/> O filme "+ nomefilme + " foi adicionado ao nosso website e contem" +
+                " uma ou mais categorias que voce tem na lista de favoritos!";
+            TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();
+        }
+
+        //Funciton
         public async Task TesteEnvioEmail(string email, string assunto, string mensagem)
         {
             try
@@ -805,6 +870,30 @@ namespace CinemaX.Controllers
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public void EmailFavorites(int id) {
+
+            Filme filme = _context.Filmes.Find(id);
+
+            List<int> emailcats = new List<int>();
+
+            List<int> emailedusers = new List<int>();
+
+            foreach(CategoriasFilme catlist in _context.CategoriasFilmes)
+            {
+                if (catlist.IdFilme == filme.IdFilme)
+                    emailcats.Add(catlist.IdCategoria);
+            }
+
+            foreach(CategoriasFavorita catlist in _context.CategoriasFavoritas)
+            {
+                if (emailcats.Contains(catlist.IdCategoria) && !emailedusers.Contains(catlist.IdUtilizador))
+                {
+                    EnviaEmailCategoria(_context.Perfils.Find(catlist.IdUtilizador).Email,filme.Nome);
+                    emailedusers.Add(catlist.IdUtilizador);
+                }
             }
         }
 

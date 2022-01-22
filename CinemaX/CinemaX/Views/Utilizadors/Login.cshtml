@@ -8,19 +8,20 @@
 
 <h1>Login</h1>
 <hr />
-<div class="row">
+<div class="row mydiv mytext-Bold">
     <div class="col-md-4">
         <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="UserName" class="control-label">Utilizador</label>
+                <label class="control-label">Username</label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserPassWord" class="control-label">Palavra-Passe</label>
+                <label class="control-label">Password</label>
                 <input asp-for="UserPassWord" class="form-control" />
                 <span asp-validation-for="UserPassWord" class="text-danger"></span>
+                <a asp-action="ForgotPassword" asp-controller="Utilizadors" class="mytext" style="color:black; font-size:small;">Esquecime da password</a>
             </div>
             <div class="form-group">
                 <input type="submit" value="Login" class="btn btn-primary" />
@@ -30,7 +31,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Voltar</a>
+    <a asp-action="Index" asp-controller="Home" class="mytext" style="color:black;">Voltar</a>
 </div>
 
 @section Scripts {
