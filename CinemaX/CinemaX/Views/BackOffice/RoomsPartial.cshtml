@@ -17,34 +17,40 @@
             </th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Numero)
-                </td>
-                <td id="Col_@item.Numero">
-                    @Html.DisplayFor(modelItem => item.Capacidade)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IdCreationUser)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataAdicionada)
-                </td>
-                <td>
-                    <a asp-action="EditRoom" asp-route-id="@item.Numero" class="btn btn-primary"
-                       data-ajax="true" data-ajax-method="get"
-                       data-ajax-mode="replace" data-ajax-update="#Col_@item.Numero">Editar</a>
-                </td>
-                <td>
-                    <a asp-action="DeleteRoom" asp-route-id="@item.Numero" class="btn btn-danger" style="margin-left:10px;" data-ajax="true" data-ajax-method="get"
-                       data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
-                </td>
-            </tr>
+        <tr>
+            <td id="Col2_@item.IdSala">
+                @Html.DisplayFor(modelItem => item.Numero)
+            </td>
+            <td id="Col_@item.IdSala">
+                @Html.DisplayFor(modelItem => item.Capacidade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCreationUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataAdicionada)
+            </td>
+            <td>
+                <a asp-action="EditRoom" asp-route-id="@item.IdSala" class="btn btn-primary"
+                   data-ajax="true" data-ajax-method="get"
+                   data-ajax-mode="replace" data-ajax-update="#Col_@item.IdSala">Editar Capacidade</a>
+            </td>
+            <td>
+                <a asp-action="EditNumber" asp-route-id="@item.IdSala" class="btn btn-primary"
+                   data-ajax="true" data-ajax-method="get"
+                   data-ajax-mode="replace" data-ajax-update="#Col2_@item.IdSala">Editar numero</a>
+            </td>
+            <td>
+                <a asp-action="DeleteRoom" asp-route-id="@item.IdSala" class="btn btn-danger" style="margin-left:10px;" data-ajax="true" data-ajax-method="get"
+                   data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

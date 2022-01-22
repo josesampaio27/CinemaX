@@ -1,0 +1,19 @@
+﻿@model CinemaX.Models.Sala
+
+<form asp-action="EditNumber" data-ajax="true" data-ajax-method="post"
+      data-ajax-update="#Col2_@Model.IdSala" data-ajax-mode="replace">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="IdSala" />
+    <div class="form-group" style="text-align:center;">
+        <input asp-for="Numero" class="form-control" />
+        <span asp-validation-for="Numero" class="text-danger"></span>
+
+
+        <input type="submit" value="Guardar" class="btn btn-primary" style="margin-top:5px;" />
+    </div>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

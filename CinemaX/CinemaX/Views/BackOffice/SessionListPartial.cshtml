@@ -1,0 +1,58 @@
+﻿@model IEnumerable<CinemaX.Models.Sessao>
+
+    <table class="table" id="Tabela">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Preço)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vagas)
+                </th>
+                <th>
+                    Filme
+                </th>
+                <th>
+                    Sala
+                </th>
+                <th>
+                    Bilhetes vendidos
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Preço)€
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vagas)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdFilmeNavigation.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdSalaNavigation.Numero)
+                    </td>
+                    <td>
+                        @ViewData[item.IdSessao.ToString()]
+                    </td>
+                    <td>
+                        <a asp-action="EditSession" asp-route-id="@item.IdSessao" class="btn btn-primary">Editar</a>
+                        <a asp-action="DeleteSession" asp-route-id="@item.IdSessao" class="btn btn-danger" style="margin-left:10px;"
+                        data-ajax="true" data-ajax-method="post"
+                        data-ajax-mode="replace" data-ajax-update="#Tabela" data-ajax-confirm="Tem a certeza?">Apagar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

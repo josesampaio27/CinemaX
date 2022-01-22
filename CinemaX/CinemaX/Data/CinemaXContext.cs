@@ -180,8 +180,10 @@ namespace CinemaX.Data
 
             modelBuilder.Entity<Sala>(entity =>
             {
-                entity.HasKey(e => e.Numero)
-                    .HasName("PK__Sala__7E532BC78B29FAF9");
+                entity.HasKey(e => e.IdSala)
+                    .HasName("PK__tmp_ms_x__A04F9B3B8456FFC0");
+
+                entity.Property(e => e.Numero).IsUnicode(false);
 
                 entity.Property(e => e.DataAdicionada).HasDefaultValueSql("(getdate())");
             });
@@ -197,11 +199,11 @@ namespace CinemaX.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Sessao__IdFilme__403A8C7D");
 
-                entity.HasOne(d => d.NumeroNavigation)
+                entity.HasOne(d => d.IdSalaNavigation)
                     .WithMany(p => p.Sessaos)
-                    .HasForeignKey(d => d.Numero)
+                    .HasForeignKey(d => d.IdSala)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Sessao__Numero__412EB0B6");
+                    .HasConstraintName("FK__Sessao__IdSala__48CFD27E");
             });
 
             modelBuilder.Entity<Utilizador>(entity =>

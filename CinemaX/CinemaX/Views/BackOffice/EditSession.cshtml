@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>EditSession</h1>
+<h1>Editar Sessão</h1>
 
 <h4>Sessao</h4>
 <hr />
@@ -19,9 +19,9 @@
                 <span asp-validation-for="IdFilme" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Numero" class="control-label"></label>
-                <select asp-for="Numero" class="form-control" asp-items="ViewBag.Numero"></select>
-                <span asp-validation-for="Numero" class="text-danger"></span>
+                <label asp-for="IdSala" class="control-label"></label>
+                <select asp-for="IdSala" class="form-control" asp-items="ViewBag.Numero"></select>
+                <span asp-validation-for="IdSala" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="IdSessao" />
             <div class="form-group">
@@ -33,12 +33,7 @@
                 <label asp-for="Preço" class="control-label"></label>
                 <input asp-for="Preço_string" class="form-control" />
                 <span asp-validation-for="Preço_string" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Vagas" class="control-label"></label>
-                <input asp-for="Vagas" class="form-control" />
-                <span asp-validation-for="Vagas" class="text-danger"></span>
-            </div>
+            </div>            
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

@@ -35,12 +35,23 @@ namespace CinemaX.Controllers
             _emailSender = emailSender;
         }
 
+        //Post
+        //Comprar bilhetes
+        [HttpPost]
         public async Task<IActionResult> Comprar(int id, int numero)
         {
+            Sessao sessao = _context.Sessaos.Find(id);
+            int vagas = sessao.Vagas;
+
+            if(numero > vagas)
+            {
+                _notyf.Error("Não exite vagas sufecientes para a quantidade de bilhetes");
+                return Redirect("/Home/ComprarBilhete/"+id.ToString());
+            }
+
+            //ciclo para comprar o numero de bilhetes escolhidos pelo utilizador
             for (int i = numero; i > 0; i--)
             {
-                Sessao sessao = _context.Sessaos.Find(id);
-
                 Bilhete bilhete = new Bilhete();
                 Utilizador utilizador = _context.Utilizadors.Find(HttpContext.Session.GetInt32("IdUtilizador"));
 
@@ -51,8 +62,13 @@ namespace CinemaX.Controllers
 
 
                 _context.Add(bilhete);
+                sessao.Vagas = sessao.Vagas - 1;
+                _context.Update(sessao);
                 await _context.SaveChangesAsync();
 
+                sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
+
+                //Envia email ao utilizador com o bilhete
                 EnviaEmail(_context.Perfils.Find(utilizador.IdUtilizador).Email, sessao);
             }
 
@@ -60,6 +76,7 @@ namespace CinemaX.Controllers
         }
 
         //Get
+        //Comprar bilhete
         public IActionResult ComprarBilhete(int? id)
         {
             if (id == null)
@@ -74,23 +91,23 @@ namespace CinemaX.Controllers
                 _notyf.Error("Precisa de iniciar sessao para comprar bilhetes");
                 return Redirect("/Home/Details/" + sessao.IdFilme.ToString());
             }
-
-            
-
+           
             if(sessao == null)
             {
                 return NotFound();
-            }
+            }           
 
             sessao.IdFilmeNavigation = _context.Filmes.Find(sessao.IdFilme);
-            sessao.NumeroNavigation = _context.Salas.Find(sessao.Numero);
+            sessao.IdSalaNavigation = _context.Salas.Find(sessao.IdSala);
 
             return View(sessao);
         }
 
+        //Get
+        //Cartaz
         public IActionResult Index()
         {
-
+            //Carrega uma lista com os ultimos 4 filmes
             List<Filme> cartaz = _context.Filmes.Skip(Math.Max(0, _context.Filmes.Count() - 4)).ToList();
 
             cartaz.Reverse();
@@ -98,6 +115,7 @@ namespace CinemaX.Controllers
             return View(cartaz);
         }
 
+        //Get
         public IActionResult Privacy()
         {
             return View();
@@ -109,9 +127,11 @@ namespace CinemaX.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        //Get
+        //Detalhes
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Filmes.FirstOrDefault(f => f.IdFilme == id) == null)
+            if (id == null || _context.Filmes.Find(id) == null)
             {
                 return NotFound();
             }
@@ -119,11 +139,13 @@ namespace CinemaX.Controllers
             var filme = await _context.Filmes.Include(u => u.CategoriasFilmes).Include(u=>u.Sessaos)
                 .FirstOrDefaultAsync(m => m.IdFilme == id);
 
+            //Adiciona as categorias aos filmes
             foreach (var cat in filme.CategoriasFilmes)
             {
-                filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.FirstOrDefault(c => c.IdCategoria == cat.IdCategoria);
+                filme.CategoriasFilmes.FirstOrDefault(f => f.IdCategoria == cat.IdCategoria && f.IdFilme == cat.IdFilme).IdCategoriaNavigation = _context.Categoria.Find(cat.IdCategoria);
             }
- 
+            
+            //Especifica o caminho para onde voltar dependendo de onde foi redirecionado
             if (Request.Headers["Referer"].ToString().Contains("/Home/Filmes"))
             {
                 ViewBag.Voltar = "Filmes";
@@ -136,12 +158,16 @@ namespace CinemaX.Controllers
             return View(filme);
         }
 
+        //Get
+        //Pagina de procurar filmes
         public async Task<IActionResult> Filmes()
         {
             #region Data preparation
+            //É criada uma lista com os nomes dos filmes e realizadores para conseguirem ser autopreenchidos atravez de ajax
             List<string> NomeFilmes = new List<string>();
             List<string> NomeRealizador = new List<string>();
 
+            //São preenchidas as listas com os dados
             foreach(var filme in _context.Filmes)
             {
                 NomeFilmes.Add(filme.Nome);
@@ -150,6 +176,7 @@ namespace CinemaX.Controllers
                         NomeRealizador.Add(filme.Realizador);
                     else
                     {
+                        //Se o filme continver mais doque um realizador estes são divididos apartir das virgulas
                         if (!NomeRealizador.Contains(filme.Realizador.Split(",")[0]))                       
                             NomeRealizador.Add(filme.Realizador.Split(",")[0]);
                         if (!NomeRealizador.Contains(filme.Realizador.Split(",")[1]))
@@ -166,10 +193,13 @@ namespace CinemaX.Controllers
             return View(await _context.Categoria.ToListAsync());
         }
 
+        //Get
+        //Procura um filme na base de dados
         public IActionResult Procurar(string NomeFilme, string NomeRealizador, int[] IdCategorias, DateTime? DataInicio, DateTime? DataFim)
         {
             List<Filme> filmes = new List<Filme>();
 
+            //Verifica todas as possiveis conbinações de dados introduzidos depois de escolhida a certa enche um ViewBag com os filmes que pertençam ás regras introduzidas
             if (NomeFilme == null && NomeRealizador == null && IdCategorias.Length == 0 && (DataInicio == null || DataFim == null))
             {
                 ViewBag.Filmes = _context.Filmes;
@@ -349,6 +379,7 @@ namespace CinemaX.Controllers
             return PartialView("Filme");
         }
 
+        //Envia email
         public void EnviaEmail(string email, Sessao session)
         {
             int? id = HttpContext.Session.GetInt32("IdUtilizador");
@@ -357,14 +388,15 @@ namespace CinemaX.Controllers
 
             string Destino, Assunto, Mensagem;
             Destino = email;
-            Assunto = "CinemaX - bilhete pata" + session.IdFilmeNavigation.Nome;
+            Assunto = "CinemaX - bilhete para " + session.IdFilmeNavigation.Nome;
             Mensagem = "<h1>Bilhete:</h1>" +
                 "Filme: " + session.IdFilmeNavigation.Nome + "<br/>" +
-                "Sala: " + session.Numero + "<br/>" +
-                "Data: " + session.Data + "<br/>";              
+                "Sala: " + session.IdSalaNavigation.Numero + "<br/>" +
+                "Data: " + session.Data + "<br/>";             
             TesteEnvioEmail(Destino, Assunto, Mensagem).GetAwaiter();
         }
 
+        //Envia email
         public async Task TesteEnvioEmail(string email, string assunto, string mensagem)
         {
             try
