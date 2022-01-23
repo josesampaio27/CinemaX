@@ -54,8 +54,14 @@ namespace CinemaX.Controllers
                 return PartialView("CategoryListPartial", _context.Categoria);
             }
 
+            if (_context.Categoria.Any(c=>c.Nome == NewName))
+            {
+                _notyf.Error("Ja existe uma categoria com esse nome");
+                return PartialView("CategoryListPartial", _context.Categoria);
+            }
+
             //verifica o tamanho maximo de uma categoria
-            if(NewName.Length > 30)
+            if (NewName.Length > 30)
             {
                 _notyf.Error("O tamanho maximo para uma categoria é de 30 caracteres");
                 return PartialView("CategoryListPartial", _context.Categoria);
@@ -89,6 +95,24 @@ namespace CinemaX.Controllers
             //Verifica se utilizador tem permissão
             if (!Perm(7))
                 return null;
+
+            if (c.Nome == null)
+            {
+                _notyf.Error("Não é possivel adicionar uma categoria sem nome");
+                return _context.Categoria.Find(c.IdCategoria).Nome;
+            }
+
+            if (_context.Categoria.Any(x => x.Nome == c.Nome))
+            {
+                _notyf.Error("Ja existe uma categoria com esse nome");
+                return _context.Categoria.Find(c.IdCategoria).Nome;
+            }
+
+            if (c.Nome.Length > 30)
+            {
+                _notyf.Error("O tamanho maximo para uma categoria é de 30 caracteres");
+                return _context.Categoria.Find(c.IdCategoria).Nome;
+            }
 
             _context.Update(c);
             _context.SaveChanges();
@@ -163,7 +187,17 @@ namespace CinemaX.Controllers
             if (NewName.Length > 30)
             {
                 _notyf.Error("O tamanho maximo para um Grupo é de 30 caracteres");
-                return PartialView("CategoryListPartial", _context.Categoria);
+                ViewBag.Permissoes = _context.Permissoes;
+                ViewBag.ListaPerm = _context.ListaPermissoes;
+                return PartialView("PermissoesPartial", _context.GrupoPermissoes);
+            }
+
+            if (_context.GrupoPermissoes.Any(g=>g.NomeGrupo == NewName))
+            {
+                _notyf.Error("Ja existe um grupo com esse nome");
+                ViewBag.Permissoes = _context.Permissoes;
+                ViewBag.ListaPerm = _context.ListaPermissoes;
+                return PartialView("PermissoesPartial", _context.GrupoPermissoes);
             }
 
             GrupoPermisso grupo = new GrupoPermisso();
