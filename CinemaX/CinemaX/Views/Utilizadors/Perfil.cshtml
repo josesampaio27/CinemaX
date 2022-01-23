@@ -6,7 +6,8 @@
 }
 
 <div class="mydiv mytext">
-    <h4>Perfil</h4>
+    <h1> <i> <font face="Bebas Neue" color="black">PERFIL</font></i></h1>
+   
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -28,13 +29,13 @@
             @Html.DisplayFor(model => model.DataNascimento)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Telemovel)
+            Telemóvel
         </dt>
         <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.Telemovel)
         </dd>
         <dt class="col-sm-2">
-            Username
+            Utilizador
         </dt>
         <dd class="col-sm-10 mytext-col2">
             @Html.DisplayFor(model => model.IdUtilizadorNavigation.UserName)
@@ -69,32 +70,32 @@
         </dt>
     </dl>
 
-    <label style="font-weight:bold;">Ultimos bilhetes:</label>
+    <label style="font-weight:bold;">Últimos bilhetes:</label>
     <br />
     @if (ViewBag.Bilhete != null)
     {
-    <div>
-        @foreach (Bilhete bilhete in ViewBag.Bilhete)
-        {
-        <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top; height:542px;">
-            <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
-            <br />
-            @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome
-            <br />
-            Sala:@bilhete.IdSessaoNavigation.IdSalaNavigation.Numero
-            <br />
-            Data:@bilhete.IdSessaoNavigation.Data
-            <br />
-            <img src="@ViewData[bilhete.NumBilhete.ToString()]" alt="" style="height:150px;width:150px" />
-        </div>
-        }
-    </div>
-    <br />
-    <a asp-action="HistoricoBilhetes" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Historico de bilhetes</a>
-    }
-            else
+        <div>
+            @foreach (Bilhete bilhete in ViewBag.Bilhete)
             {
-               <label>Ainda não comprou nenhum bilhete!!!</label>
+                <div style="display: inline-block; background-color:ghostwhite;border-block-color:black; width:200px; text-align:center; margin-right:10px; vertical-align:top; height:542px;">
+                    <img src="~/Fotos/@bilhete.IdSessaoNavigation.IdFilmeNavigation.Foto" width="200" />
+                    <br />
+                    @bilhete.IdSessaoNavigation.IdFilmeNavigation.Nome
+                    <br />
+                    Sala:@bilhete.IdSessaoNavigation.IdSalaNavigation.Numero
+                    <br />
+                    Data:@bilhete.IdSessaoNavigation.Data
+                    <br />
+                    <img src="@ViewData[bilhete.NumBilhete.ToString()]" alt="" style="height:150px;width:150px" />
+                </div>
             }
+        </div>
+        <br />
+        <a asp-action="HistoricoBilhetes" asp-route-id="@Model.IdUtilizador" class="btn btn-primary">Histórico de bilhetes</a>
+    }
+    else
+    {
+        <label>Ainda não comprou nenhum bilhete!!!</label>
+    }
 </div>
 

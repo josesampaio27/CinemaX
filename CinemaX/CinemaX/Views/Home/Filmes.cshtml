@@ -4,33 +4,35 @@
     ViewData["Title"] = "Filmes";
 }
 
+<h1> <i> <font face="Bebas Neue" color="black">FILMES</font></i></h1>
+
 <form asp-action="Procurar" data-ajax="true"
       data-ajax-method="post" data-ajax-mode="replace"
       data-ajax-update="#TabFilmes" data-ajax-success="sucesso">
     <div style="display: flex; border: solid; border-width: thin; border-color: black; padding: 20px; background-color: #72727296; align-items: center; " class="mytext">
 
         <div class="ui-widget" style="width:min-content">
-            <label for="nome">Nome:</label>
+            <label for="nome"> <i> <font face="Bebas Neue" color="black" size="4">NOME:</font></i></label>
             <input id="nome" name="NomeFilme" />
         </div>
 
         <div class="ui-widget" style="padding-left: 20px; width: min-content">
-            <label for="Realizador">Realizador:</label>
+            <label for="Realizador"> <i> <font face="Bebas Neue" color="black" size="4">REALIZADOR:</font></i></label>
             <input id="Realizador" name="NomeRealizador" />
         </div>
 
         <div style="width: min-content; padding-left: 20px;">
-            <label>Data inicio:</label>
+            <label> <i> <font face="Bebas Neue" color="black" size="4">DATA INÍCIO</font></i></label>
             <input name="DataInicio" type="date" style="width:150px;" />
         </div>
 
         <div style="width: min-content; padding-left: 20px;">
-            <label>Data fim:</label>
+            <label> <i> <font face="Bebas Neue" color="black" size="4">DATA FIM:</font></i></label>
             <input name="DataFim" type="date" style="width:150px;" />
         </div>
 
         <div>
-            <label style="margin-left:18px;">Categorias:</label>
+            <label style="margin-left:18px;"> <i> <font face="Bebas Neue" size="4" color="black">CATEGORIAS:</font></i></label>
             <ul style="overflow-y:scroll; max-height:100px;">
                 @foreach (Categorium categorias in ViewBag.Categorias)
                 {

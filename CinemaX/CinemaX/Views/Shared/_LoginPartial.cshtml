@@ -3,11 +3,19 @@
 <ul class="navbar-nav">
     @if (Context.Session.GetString("NomeUtilizador") != null)
     {
-        <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Perfil" asp-route-id="@Context.Session.GetInt32("IdUtilizador")">Perfil</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Logout">Sair</a>
+    <li class="nav-item">
+        @*<a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Perfil" asp-route-id="@Context.Session.GetInt32("IdUtilizador")">
+            <i> <font face="Audiowide" color="white" size="3">PERFIL</font></i>
+        </a>*@
+        <a class="navbar-brand" asp-area="" asp-controller="Utilizadors" asp-action="Perfil" asp-route-id="@Context.Session.GetInt32("IdUtilizador")"><img src="~/FotosSite/Perfil.png" width="40" height="40" style="margin-bottom:5px"/></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+    </li>
+        <li class="nav-item" style="margin-top:6px">
+            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Logout">
+                <i> <font face="Audiowide" color="white" size="3" >SAIR</font></i>
+            </a>
         </li>
 
         //asp-action="Edit" asp-route-id="@item.Id"
@@ -15,10 +23,14 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Register">Inscrever</a>
+            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Register">
+                <i> <font face="Audiowide" color="white" size="3">REGISTAR</font></i>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Login">Entrar</a>
+            <a class="nav-link" asp-area="" asp-controller="Utilizadors" asp-action="Login">
+                <i> <font face="Audiowide" color="white" size="3">ENTRAR</font></i>
+            </a>
         </li>
     }
 </ul>

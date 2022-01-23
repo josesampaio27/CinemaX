@@ -4,19 +4,23 @@
     ViewData["Title"] = "Cartaz";
 }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-<font face="Bebas Neue" size="20px" color="#FFFFF">EM DESTAQUE</font>
+
+<p style="text-align:center;"> 
+    <img src="~/FotosSite/Logo.png" width="450" height="150" />
+    <br />
+    <br />
+    <i> <font face="Bebas Neue" size="20px" color="#FFFFF">EM DESTAQUE:</font></i>  
+</p>  
 
 
 
-@foreach (var item in Model)
-{
-    <a href="/Home/Details/@item.IdFilme">
-        <img src="~/Fotos/@item.Foto" width="250" height="370" style="border:0px;margin:10px" />
-    </a>
-}
+
+    @foreach (var item in Model)
+    {
+        <a href="/Home/Details/@item.IdFilme">
+            <img src="~/Fotos/@item.Foto" width="250" height="370" style="border:0px;margin:10px" />
+        </a>
+    }
 
 
 

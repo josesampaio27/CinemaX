@@ -7,42 +7,36 @@
 }
 
 <div class="mydiv">
-    <h4>Filme</h4>
+    <h4><i> <font face="Bebas Neue" size="400" color="black">@Html.DisplayFor(model => model.Nome)</font></i> </h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class="col-sm-10 mytext">
-            @Html.DisplayFor(model => model.Nome)
+        <dd class="col-sm-2">
+            <i> <font face="Bebas Neue" size="5" color="black">@Html.DisplayNameFor(model => model.Realizador)</font></i>         
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Realizador)
-        </dt>
         <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Realizador)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Data)
-        </dt>
+        <dd class="col-sm-2">
+            <i> <font face="Bebas Neue" size="5" color="black">@Html.DisplayNameFor(model => model.Data)</font></i>
+        </dd>
         <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Data)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descrição)
-        </dt>
+        <dd class="col-sm-2">
+            <i> <font face="Bebas Neue" size="5" color="black">@Html.DisplayNameFor(model => model.Descrição)</font></i>
+        </dd>
         <dd class="col-sm-10 mytext">
             @Html.DisplayFor(model => model.Descrição)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Duracao)
-        </dt>
+        <dd class="col-sm-2">
+            <i> <font face="Bebas Neue" size="5" color="black">Duração</font></i>
+        </dd>
         <dd class="col-sm-10 mytext">
             @duracao
         </dd>
-        <dt class="col-sm-2">
-            Categorias:
-        </dt>
+        <dd class="col-sm-2">
+            <i> <font face="Bebas Neue" size="5" color="black">CATEGORIAS</font></i>
+        </dd>
         <dd class="col-sm-10 mytext">
             @{int CategoriasCount = Model.CategoriasFilmes.Count; }
             @foreach (var Categoria in Model.CategoriasFilmes)
@@ -58,7 +52,7 @@
         </dd>
     </dl>
     @{int hassession = 0; }
-    <h4>Sessões:</h4>
+<h4> <i> <font face="Bebas Neue" size="5" color="black">SESSÕES</font></i>:</h4>
     @if (Model.Sessaos.Count == 0)
     {
         <label>Não existem sessões para este filme.</label>
@@ -82,7 +76,7 @@
 
     <br />
     <br />
-    <h4>Trailer:</h4>
+    <h4> <i> <font face="Bebas Neue" size="5" color="black">TRAILER</font></i></h4>
     <div id="player"></div>
 
     <br />

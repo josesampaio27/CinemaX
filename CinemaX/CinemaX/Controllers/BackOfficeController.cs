@@ -619,7 +619,7 @@ namespace CinemaX.Controllers
             }
             sala.Numero = numero;
             _context.Add(sala);
-            await _context.SaveChangesAsync();
+           await _context.SaveChangesAsync();
 
             return PartialView("RoomsPartial", _context.Salas);
         }

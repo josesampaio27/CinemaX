@@ -5,11 +5,9 @@
     Layout = "~/Views/Shared/_LayoutBackOfiice.cshtml";
 }
 
-<h1>DeleteSession</h1>
+<h1>APAGAR SESSÃO</h1>
 
-<h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Sessao</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -46,7 +44,7 @@
     
     <form asp-action="DeleteSession">
         <input type="hidden" asp-for="IdSessao" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="SessionList">Back to List</a>
+        <input type="submit" value="Apagar" class="btn btn-danger" /> |
+        <a asp-action="SessionList">Volta</a>
     </form>
 </div>

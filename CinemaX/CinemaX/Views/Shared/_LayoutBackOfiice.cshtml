@@ -6,6 +6,12 @@
     <title>@ViewData["Title"] - CinemaXBackOffice</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/MeuSite.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -23,37 +29,49 @@
                         @if (perm != null && perm.Contains("2"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="FilmList">Filmes</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="FilmList">
+                                    <i> <font face="Audiowide" color="white" size="4">FILMES</font></i>
+                                </a>
                             </li>
                         }
                         @if (perm != null && perm.Contains("7"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="CategoryList">Categorias</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="CategoryList">
+                                    <i> <font face="Audiowide" color="white" size="4">CATEGORIAS</font></i>
+                                </a>
                             </li>
                         }
                         @if (perm != null && perm.Contains("4"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="Rooms">Salas</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="Rooms">
+                                    <i> <font face="Audiowide" color="white" size="4">SALAS</font></i>
+                                </a>
                             </li>
                         }
                         @if (perm != null && perm.Contains("5"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="SessionList">Sessoes</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="SessionList">
+                                    <i> <font face="Audiowide" color="white" size="4">SESSÕES</font></i>
+                                </a>
                             </li>
                         }
                         @if (perm != null && perm.Contains("3"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="UserList">Utilizadores</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="UserList">
+                                    <i> <font face="Audiowide" color="white" size="4">UTILIZADORES</font></i>
+                                </a>
                             </li>
                         }
                         @if (perm != null && perm.Contains("8"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="Permissoes">Permissoes</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="Permissoes">
+                                    <i> <font face="Audiowide" color="white" size="4">PERMISSÕES</font></i>
+                                </a>
                             </li>
                         }
                     </ul>

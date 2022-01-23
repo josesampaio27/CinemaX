@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/lib/jqueryui/jquery-ui.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/MeuSite.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -22,15 +28,20 @@
                         @using Microsoft.AspNetCore.Http;
                         @if (Context.Session.GetInt32("IdUtilizador") != null)
                         {
+
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Filmes">Filmes</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Filmes">                                  
+                                    <i> <font face="Audiowide" color="white" size="5">FILMES</font></i>
+                                </a>
                             </li>
                         }
                         @{string perm = Context.Session.GetString("Permissoes"); }
                         @if (perm != null && perm.Contains("1"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="FilmList">BackOffice</a>
+                                <a class="nav-link" asp-area="" asp-controller="BackOffice" asp-action="FilmList">
+                                    <i> <font face="Audiowide" color="white" size="5">BACKOFFICE</font></i>
+                                </a>
                             </li>
                         }
                     </ul>
